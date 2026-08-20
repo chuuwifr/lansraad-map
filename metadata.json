@@ -1,0 +1,6 @@
+{
+  "name": "Landsraad Holosphere - 3D Imperial Dune Star Map",
+  "description": "Interactive stylized 3D holographic star map and tactical planetary navigator for the Landsraad High Council, featuring multi-level zoom, dynamic lighting, real-time balance of power, and low-light ergonomic HUD.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

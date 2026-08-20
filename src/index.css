@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --holo-amber: #d97706;
+    --holo-gold: #f59e0b;
+    --holo-spice: #f97316;
+    --holo-cyan: #06b6d4;
+    --holo-crimson: #dc2626;
+    --holo-emerald: #10b981;
+    --holo-primary: #d97706;
+    --holo-glow: rgba(217, 119, 6, 0.4);
+    --bg-deep: #060709;
+    --bg-panel: rgba(10, 13, 18, 0.75);
+    --border-holo: rgba(217, 119, 6, 0.25);
+  }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--bg-deep);
+    color: #e2d9c8;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+
+  h1, h2, h3, .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+
+  .font-mono, code, .font-data {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .font-display {
+    font-family: 'Syne', sans-serif;
+  }
+}
+
+/* Scanline Effect */
+.scanlines {
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0) 50%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.35)
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Subtle holographic grain */
+.holo-grain {
+  background-image: radial-gradient(rgba(245, 158, 11, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Custom Clipped Corners */
+.clip-corner-tl-br {
+  clip-path: polygon(
+    12px 0%, 100% 0%, 
+    100% calc(100% - 12px), calc(100% - 12px) 100%, 
+    0% 100%, 0% 12px
+  );
+}
+
+.clip-corner-all {
+  clip-path: polygon(
+    8px 0%, calc(100% - 8px) 0%,
+    100% 8px, 100% calc(100% - 8px),
+    calc(100% - 8px) 100%, 8px 100%,
+    0% calc(100% - 8px), 0% 8px
+  );
+}
+
+.clip-tag {
+  clip-path: polygon(0% 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.clip-header-badge {
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+
+/* Holographic Glows */
+.glow-amber {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.1);
+}
+
+.glow-spice {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.3), inset 0 0 15px rgba(249, 115, 22, 0.15);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.25), inset 0 0 15px rgba(6, 182, 212, 0.1);
+}
+
+.glow-crimson {
+  box-shadow: 0 0 25px rgba(220, 38, 38, 0.3), inset 0 0 15px rgba(220, 38, 38, 0.12);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.25), inset 0 0 15px rgba(16, 185, 129, 0.1);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6), 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.text-glow-spice {
+  text-shadow: 0 0 12px rgba(249, 115, 22, 0.7), 0 0 24px rgba(249, 115, 22, 0.35);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.text-glow-crimson {
+  text-shadow: 0 0 10px rgba(220, 38, 38, 0.65), 0 0 20px rgba(220, 38, 38, 0.3);
+}
+
+.text-glow-emerald {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.6), 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Animations */
+@keyframes holoPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; filter: brightness(1.15); }
+}
+
+.animate-holo-pulse {
+  animation: holoPulse 4s ease-in-out infinite;
+}
+
+@keyframes gridDrift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(30px); }
+}
+
+/* Custom Scrollbar for HUD */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 13, 18, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.4);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 119, 6, 0.8);
+}
