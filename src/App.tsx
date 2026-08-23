@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ZoomLevel, 
@@ -11,7 +11,7 @@ import {
   STAR_SYSTEMS_DATA,
   HOUSES_DATA
 } from './data/landsraadData';
-import { HolosphereCanvas } from './components/canvas/HolosphereCanvas';
+import { HolosphereCanvas, HolosphereCanvasRef } from './components/canvas/HolosphereCanvas';
 import { TopNavigationBar } from './components/hud/TopNavigationBar';
 import { SectorDetailsPanel } from './components/hud/SectorDetailsPanel';
 import { AstrogationMeasureTool } from './components/hud/AstrogationMeasureTool';
@@ -21,9 +21,12 @@ import { DisplaySettingsModal } from './components/hud/DisplaySettingsModal';
 import { PlanetCreatorModal } from './components/hud/PlanetCreatorModal';
 import { MobileTacticalBar } from './components/hud/MobileTacticalBar';
 import { PlanetHoverBanner } from './components/hud/PlanetHoverBanner';
+import { TacticalNavControls } from './components/hud/TacticalNavControls';
 import { Layers, Compass, Navigation, Info, Shield, Sparkles } from 'lucide-react';
 
 export default function App() {
+  const holosphereCanvasRef = useRef<HolosphereCanvasRef>(null);
+
   // Main Systems & Houses State
   const [systems, setSystems] = useState<StarSystem[]>(STAR_SYSTEMS_DATA);
   const [houses, setHouses] = useState<Record<string, HouseInfo>>(HOUSES_DATA);
@@ -144,9 +147,43 @@ export default function App() {
     setEditingSystem(null);
   }, []);
 
+  // Manual Zoom In & Out handlers (+ / -)
+  const handleZoomIn = useCallback(() => {
+    setZoomLevel(current => {
+      if (current === 'galactic') return 'system';
+      if (current === 'system') return 'planetary';
+      return 'planetary';
+    });
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomLevel(current => {
+      if (current === 'planetary') return 'system';
+      if (current === 'system') return 'galactic';
+      return 'galactic';
+    });
+  }, []);
+
+  // Directional Rotation handler
+  const handleRotate = useCallback((deltaTheta: number, deltaPhi: number) => {
+    if (holosphereCanvasRef.current) {
+      holosphereCanvasRef.current.rotateBy(deltaTheta, deltaPhi);
+    }
+  }, []);
+
+  // Reset Camera & Orientation View
+  const handleResetOrientation = useCallback(() => {
+    if (holosphereCanvasRef.current) {
+      holosphereCanvasRef.current.resetRotation();
+    }
+  }, []);
+
   // Reset Camera View
   const handleResetView = useCallback(() => {
     setZoomLevel('galactic');
+    if (holosphereCanvasRef.current) {
+      holosphereCanvasRef.current.resetRotation();
+    }
   }, []);
 
   return (
@@ -158,6 +195,7 @@ export default function App() {
         currentSystem={selectedSystem}
         zoomLevel={zoomLevel}
         config={config}
+        houses={houses}
         onZoomChange={setZoomLevel}
         onSelectSystem={handleSelectSystem}
         onUpdateConfig={setConfig}
@@ -175,6 +213,7 @@ export default function App() {
       {/* 2. Main 3D Canvas Area */}
       <main className="relative flex-1 w-full h-full overflow-hidden">
         <HolosphereCanvas
+          ref={holosphereCanvasRef}
           systems={systems}
           selectedSystem={selectedSystem}
           selectedPOI={selectedPOI}
@@ -194,6 +233,38 @@ export default function App() {
           houses={houses}
           onSelectSystem={handleSelectSystem}
         />
+
+        {/* Tactical Navigation Controls (D-Pad Rotation & Manual Zoom +/-) */}
+        <div className="absolute bottom-6 left-4 z-20 hidden md:block">
+          <TacticalNavControls
+            zoomLevel={zoomLevel}
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            onRotate={handleRotate}
+            onResetOrientation={handleResetOrientation}
+            onSetZoomLevel={setZoomLevel}
+          />
+        </div>
+
+        {/* Mobile Quick Zoom Buttons (+ / -) top right below navbar */}
+        <div className="md:hidden absolute top-4 right-3 z-20 flex flex-col gap-1.5 p-1.5 rounded-xl bg-[#06080d]/90 backdrop-blur-md border border-[#f59e0b]/30 shadow-lg">
+          <button
+            onClick={handleZoomIn}
+            disabled={zoomLevel === 'planetary'}
+            title="Zoomer (+)"
+            className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#121620] active:bg-[#f59e0b] text-[#f59e0b] active:text-black border border-[#f59e0b]/30 disabled:opacity-30 disabled:pointer-events-none font-bold text-lg"
+          >
+            +
+          </button>
+          <button
+            onClick={handleZoomOut}
+            disabled={zoomLevel === 'galactic'}
+            title="Dézoomer (-)"
+            className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#121620] active:bg-[#f59e0b] text-[#f59e0b] active:text-black border border-[#f59e0b]/30 disabled:opacity-30 disabled:pointer-events-none font-bold text-lg"
+          >
+            −
+          </button>
+        </div>
 
         {/* Floating Sector Details Panel (Right HUD - Desktop Framer Motion) */}
         <div className="absolute top-4 right-4 z-20 hidden md:flex flex-col items-end pointer-events-none">
@@ -375,12 +446,13 @@ export default function App() {
         />
       )}
 
-      {/* 5. Landsraad Fiefs Geopolitical Atlas Modal with House Coat of Arms Customizer */}
+      {/* 5. Landsraad Fiefs Geopolitical Atlas Modal with House Coat of Arms Customizer & Creation */}
       {isFiefsAtlasOpen && (
         <FiefdomsAtlasModal
           systems={systems}
           houses={houses}
           onUpdateHouse={handleUpdateHouse}
+          onSaveNewHouse={handleUpdateHouse}
           onSelectSystem={handleSelectSystem}
           onClose={() => setIsFiefsAtlasOpen(false)}
         />

@@ -1,9 +1,15 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useImperativeHandle } from 'react';
 import * as THREE from 'three';
-import { StarSystem, TacticalPOI, ZoomLevel, MapVisualConfig } from '../../types/landsraad';
+import { StarSystem, TacticalPOI, ZoomLevel, MapVisualConfig, SystemPlanet, SystemStar, SystemMoon } from '../../types/landsraad';
 import { HOUSES_DATA } from '../../data/landsraadData';
+import { getSystemPlanetsAndStars } from '../../data/systemAstronomicalData';
 import { audioSynth } from '../../services/audioSynth';
 import { PlanetTextureGenerator } from '../../services/planetTextureGenerator';
+
+export interface HolosphereCanvasRef {
+  rotateBy: (deltaTheta: number, deltaPhi: number) => void;
+  resetRotation: () => void;
+}
 
 interface HolosphereCanvasProps {
   systems: StarSystem[];
@@ -19,7 +25,7 @@ interface HolosphereCanvasProps {
   onHoverSystem?: (system: StarSystem | null) => void;
 }
 
-export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
+export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, HolosphereCanvasProps>(({
   systems,
   selectedSystem,
   selectedPOI,
@@ -31,7 +37,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
   onSelectPOI,
   onZoomChange,
   onHoverSystem
-}) => {
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -57,8 +63,50 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
   const shieldMeshRef = useRef<THREE.Mesh | null>(null);
   const atmosphereMeshRef = useRef<THREE.Mesh | null>(null);
   const poiPinsGroupRef = useRef<THREE.Group>(new THREE.Group());
-  const orbitalBodyMeshesRef = useRef<{ mesh: THREE.Mesh; radius: number; speed: number; angle: number }[]>([]);
-  const routePulsePointsRef = useRef<{ line: THREE.Line; curve: THREE.QuadraticBezierCurve3; t: number; speed: number; pulseMesh: THREE.Mesh }[]>([]);
+
+  // Dynamic references for animated rotating textured planets in Galactic and System views
+  const galacticPlanetsRef = useRef<{
+    mesh: THREE.Mesh;
+    cloudsMesh?: THREE.Mesh | null;
+    rotSpeed: number;
+    system: StarSystem;
+  }[]>([]);
+
+  // Animated Stars in System view (supports single & binary star systems)
+  const systemStarsRef = useRef<{
+    mesh: THREE.Mesh;
+    coronaMesh?: THREE.Mesh | null;
+    orbitRadius: number;
+    orbitSpeed: number;
+    angle: number;
+  }[]>([]);
+
+  // Animated Planets in System view with their respective moons
+  const systemPlanetsAnimatedRef = useRef<{
+    planetContainer: THREE.Group;
+    planetMesh: THREE.Mesh;
+    cloudsMesh?: THREE.Mesh | null;
+    ringMesh?: THREE.Mesh | null;
+    orbitAngle: number;
+    orbitRadius: number;
+    orbitSpeed: number;
+    rotSpeed: number;
+    planetData: SystemPlanet;
+    moons: {
+      mesh: THREE.Mesh;
+      orbitRadius: number;
+      orbitSpeed: number;
+      angle: number;
+    }[];
+  }[]>([]);
+
+  const routePulsePointsRef = useRef<{
+    line: THREE.Line;
+    curve: THREE.QuadraticBezierCurve3;
+    t: number;
+    speed: number;
+    pulseMesh: THREE.Mesh;
+  }[]>([]);
 
   // Camera animation state
   const targetCamPosRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 240, 520));
@@ -77,6 +125,18 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
   const prevMousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const orbitRotationRef = useRef<{ theta: number; phi: number }>({ theta: 0, phi: 0.35 });
   const pinchDistRef = useRef<number | null>(null);
+
+  // Expose Imperative Handle for directional controls & rotation
+  useImperativeHandle(ref, () => ({
+    rotateBy: (deltaTheta: number, deltaPhi: number) => {
+      orbitRotationRef.current.theta += deltaTheta;
+      orbitRotationRef.current.phi = Math.max(-0.85, Math.min(1.25, orbitRotationRef.current.phi + deltaPhi));
+    },
+    resetRotation: () => {
+      orbitRotationRef.current.theta = 0;
+      orbitRotationRef.current.phi = 0.35;
+    }
+  }));
 
   // Raycaster
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
@@ -134,7 +194,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
     rendererRef.current = renderer;
 
     // 4. Lights (Cinematic Directional Sun + Subtle ambient space fill)
-    const ambientLight = new THREE.AmbientLight(0x181c28, 1.4);
+    const ambientLight = new THREE.AmbientLight(0x242b3d, 1.6);
     scene.add(ambientLight);
 
     const sunIntensity = config.sunIntensity ?? 3.2;
@@ -142,7 +202,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
     dirLight.position.set(320, 380, 280);
     scene.add(dirLight);
 
-    const secondaryDirLight = new THREE.DirectionalLight(0x38bdf8, 0.8);
+    const secondaryDirLight = new THREE.DirectionalLight(0x38bdf8, 1.1);
     secondaryDirLight.position.set(-300, -200, -200);
     scene.add(secondaryDirLight);
 
@@ -241,7 +301,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
     };
   }, [config.particleDensity, config.showCoordinatesGrid, config.sunIntensity, getThemeColor]);
 
-  // Build Galactic Sector Elements (Stars, Coronas, Halo Rings, Fiefdom Envelopes, Guild Jump Conduits)
+  // Build Galactic Sector Elements with Authentic Planet Textures, Atmosphere Halos & Rings
   useEffect(() => {
     const galacticGroup = galacticGroupRef.current;
     const fiefdomsGroup = fiefdomsGroupRef.current;
@@ -259,6 +319,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
     }
     interactiveObjectsRef.current = [];
     routePulsePointsRef.current = [];
+    galacticPlanetsRef.current = [];
 
     // Filter systems based on active filter
     let visibleSystems = systems;
@@ -270,53 +331,106 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
       visibleSystems = systems.filter(s => s.strategicImportance === 'Crucial' || s.strategicImportance === 'Majeur');
     }
 
-    const starSphereGeo = new THREE.SphereGeometry(5.0, 24, 24);
-
     visibleSystems.forEach((sys) => {
       const house = HOUSES_DATA[sys.controllingHouse] || HOUSES_DATA.corrino;
       const isCurrentSelected = sys.id === selectedSystem.id;
       const starColor = new THREE.Color(sys.starColor || house.color);
 
-      // Star Mesh
-      const starMaterial = new THREE.MeshStandardMaterial({
-        color: starColor,
-        emissive: starColor,
-        emissiveIntensity: isCurrentSelected ? 1.6 : 0.9,
-        roughness: 0.2,
-        metalness: 0.1
+      // System container root node
+      const systemContainer = new THREE.Group();
+      systemContainer.position.set(sys.coordinates[0], sys.coordinates[1], sys.coordinates[2]);
+      systemContainer.userData = { type: 'star', system: sys };
+
+      // 1. Generate Authentic Planet Texture Maps (Custom or Procedural Biome)
+      const maps = PlanetTextureGenerator.generateMaps(sys);
+
+      // Size of the textured planet sphere in Galaxy view
+      const planetRadius = sys.isCustom ? 7.2 : (sys.strategicImportance === 'Crucial' ? 8.2 : 6.4);
+      const planetGeo = new THREE.SphereGeometry(planetRadius, 32, 32);
+
+      const planetMat = new THREE.MeshStandardMaterial({
+        map: maps.diffuseMap,
+        bumpMap: maps.bumpMap,
+        bumpScale: 1.0,
+        roughness: sys.surfaceTextureType === 'ocean' ? 0.4 : 0.72,
+        metalness: sys.surfaceTextureType === 'synthetic' ? 0.45 : 0.06,
+        emissiveMap: maps.nightLightsMap,
+        emissive: new THREE.Color(0xffffff),
+        emissiveIntensity: isCurrentSelected ? 0.9 : 0.45
       });
 
-      const starMesh = new THREE.Mesh(starSphereGeo, starMaterial);
-      starMesh.position.set(sys.coordinates[0], sys.coordinates[1], sys.coordinates[2]);
-      starMesh.userData = { type: 'star', system: sys };
+      const planetMesh = new THREE.Mesh(planetGeo, planetMat);
+      systemContainer.add(planetMesh);
 
-      // Halo Corona / Lens Flare Ring
-      const coronaGeo = new THREE.RingGeometry(7.5, 9.8, 32);
+      // 2. Mini Dynamic Cloud Sphere (If applicable)
+      let miniCloudMesh: THREE.Mesh | null = null;
+      const cloudDensity = sys.cloudDensity ?? 0.65;
+      if (sys.surfaceTextureType !== 'gas_giant' && cloudDensity > 0.1) {
+        const cloudGeo = new THREE.SphereGeometry(planetRadius * 1.02, 28, 28);
+        const cloudMat = new THREE.MeshStandardMaterial({
+          map: maps.cloudMap,
+          transparent: true,
+          opacity: cloudDensity * 0.85,
+          roughness: 0.9,
+          depthWrite: false
+        });
+        miniCloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+        systemContainer.add(miniCloudMesh);
+      }
+
+      // 3. Mini Planetary Rings (For Gas Giants or ringed worlds)
+      if (sys.hasRings || sys.surfaceTextureType === 'gas_giant') {
+        const ringGeo = new THREE.RingGeometry(planetRadius * 1.35, planetRadius * 2.25, 36);
+        const ringMat = new THREE.MeshStandardMaterial({
+          map: maps.ringMap || maps.diffuseMap,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.85,
+          roughness: 0.85
+        });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = Math.PI / 2 + 0.35;
+        systemContainer.add(ringMesh);
+      }
+
+      // 4. Atmospheric Scattering Glow Halo
+      const atmoGeo = new THREE.SphereGeometry(planetRadius * 1.15, 24, 24);
+      const atmoMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(sys.atmosphereColor),
+        transparent: true,
+        opacity: isCurrentSelected ? 0.38 : 0.24,
+        side: THREE.BackSide
+      });
+      const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+      systemContainer.add(atmoMesh);
+
+      // 5. Star Stellar Radiation Corona Ring
+      const coronaGeo = new THREE.RingGeometry(planetRadius * 1.35, planetRadius * 1.7, 32);
       const coronaMat = new THREE.MeshBasicMaterial({
         color: starColor,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: isCurrentSelected ? 0.9 : 0.45
+        opacity: isCurrentSelected ? 0.85 : 0.35
       });
       const coronaMesh = new THREE.Mesh(coronaGeo, coronaMat);
       coronaMesh.rotation.x = Math.PI / 2;
-      starMesh.add(coronaMesh);
+      systemContainer.add(coronaMesh);
 
-      // Selection Marker Beacon
+      // 6. Selection Marker Beacon
       if (isCurrentSelected) {
-        const selRingGeo = new THREE.RingGeometry(12, 13.5, 32);
+        const selRingGeo = new THREE.RingGeometry(planetRadius * 1.9, planetRadius * 2.2, 36);
         const selRingMat = new THREE.MeshBasicMaterial({
           color: 0xf59e0b,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.8
+          opacity: 0.85
         });
         const selRing = new THREE.Mesh(selRingGeo, selRingMat);
         selRing.rotation.x = Math.PI / 2;
-        starMesh.add(selRing);
+        systemContainer.add(selRing);
       }
 
-      // Vertical Starlight Tactical Beacon to grid plane
+      // 7. Vertical Starlight Tactical Beacon to grid plane
       const beaconGeo = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(0, -70 - sys.coordinates[1], 0)
@@ -326,43 +440,49 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
         dashSize: 3.5,
         gapSize: 3.5,
         transparent: true,
-        opacity: 0.22
+        opacity: 0.25
       });
       const beaconLine = new THREE.Line(beaconGeo, beaconMat);
       beaconLine.computeLineDistances();
-      starMesh.add(beaconLine);
+      systemContainer.add(beaconLine);
 
-      // Base footprint ring on grid floor
-      const baseRingGeo = new THREE.RingGeometry(3, 4.5, 16);
+      // 8. Base footprint ring on grid floor
+      const baseRingGeo = new THREE.RingGeometry(3.5, 5.2, 16);
       const baseRingMat = new THREE.MeshBasicMaterial({
         color: starColor,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.35
+        opacity: 0.4
       });
       const baseRing = new THREE.Mesh(baseRingGeo, baseRingMat);
       baseRing.position.set(0, -70 - sys.coordinates[1], 0);
       baseRing.rotation.x = Math.PI / 2;
-      starMesh.add(baseRing);
+      systemContainer.add(baseRing);
 
-      galacticGroup.add(starMesh);
-      interactiveObjectsRef.current.push(starMesh);
+      galacticGroup.add(systemContainer);
+      interactiveObjectsRef.current.push(systemContainer);
+
+      galacticPlanetsRef.current.push({
+        mesh: planetMesh,
+        cloudsMesh: miniCloudMesh,
+        rotSpeed: 0.003 + (Math.abs(sys.coordinates[0] % 5) * 0.0008),
+        system: sys
+      });
     });
 
-    // Build Fiefdom indicators (clean subtle territory rings without bulky wireframe spheres)
+    // Build Fiefdom indicators (clean subtle territory rings)
     if (config.showFiefdomSpheres && config.activeFilter === 'fiefs') {
       const houseList = Object.values(HOUSES_DATA);
       houseList.forEach((house) => {
         const capitalSys = systems.find(s => s.id === house.capitalSystemId);
         if (capitalSys) {
           const sphereRadius = house.territoryInfluenceRadius * 0.75;
-          // Subtle Equatorial Fief Ring only, without heavy 3D holosphere wireframe
           const fiefRingGeo = new THREE.RingGeometry(sphereRadius * 0.95, sphereRadius * 1.02, 48);
           const fiefRingMat = new THREE.MeshBasicMaterial({
             color: new THREE.Color(house.accentColor),
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.2
+            opacity: 0.22
           });
           const fiefRing = new THREE.Mesh(fiefRingGeo, fiefRingMat);
           fiefRing.position.set(capitalSys.coordinates[0], capitalSys.coordinates[1], capitalSys.coordinates[2]);
@@ -375,7 +495,6 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
     // Build Spacing Guild Heighliner Space-Folding Jump Conduits (Animated Bezier Conduits)
     if (config.showGuildRoutes || config.activeFilter === 'guild-routes' || config.activeFilter === 'all') {
       const arrakisSys = systems.find(s => s.id === 'arrakis');
-      const junctionSys = systems.find(s => s.id === 'junction');
 
       if (arrakisSys) {
         const arrakisPos = new THREE.Vector3(arrakisSys.coordinates[0], arrakisSys.coordinates[1], arrakisSys.coordinates[2]);
@@ -397,7 +516,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
           const routeMat = new THREE.LineBasicMaterial({
             color: isJunctionRoute ? 0x06b6d4 : 0x38bdf8,
             transparent: true,
-            opacity: isJunctionRoute ? 0.5 : 0.22
+            opacity: isJunctionRoute ? 0.55 : 0.24
           });
 
           const routeLine = new THREE.Line(routeGeo, routeMat);
@@ -460,13 +579,14 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
     }
   }, [isMeasuringMode, measuringTargetSystem, selectedSystem]);
 
-  // Build System & Multi-Body Orbital Level (Zoom Level = 'system')
+  // Build System & Multi-Body Orbital Level with Full Sun(s), Planets, and Moons (Zoom Level = 'system')
   useEffect(() => {
     const orbitalGroup = systemOrbitalGroupRef.current;
     while (orbitalGroup.children.length > 0) {
       orbitalGroup.remove(orbitalGroup.children[0]);
     }
-    orbitalBodyMeshesRef.current = [];
+    systemStarsRef.current = [];
+    systemPlanetsAnimatedRef.current = [];
 
     if (zoomLevel !== 'system') {
       orbitalGroup.visible = false;
@@ -475,79 +595,257 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
 
     orbitalGroup.visible = true;
 
-    // Central Star Representation
-    const sunRadius = 22;
-    const sunGeo = new THREE.SphereGeometry(sunRadius, 32, 32);
-    const sunMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(selectedSystem.starColor),
-      emissive: new THREE.Color(selectedSystem.starColor),
-      emissiveIntensity: 1.5
-    });
-    const sunMesh = new THREE.Mesh(sunGeo, sunMat);
-    orbitalGroup.add(sunMesh);
+    // Retrieve full canonical astronomical specification (Suns, Planets, Moons)
+    const { stars, planets } = getSystemPlanetsAndStars(selectedSystem);
 
-    // Star Corona
-    const sunCoronaGeo = new THREE.RingGeometry(sunRadius * 1.2, sunRadius * 1.5, 48);
-    const sunCoronaMat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(selectedSystem.starColor),
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.5
-    });
-    const sunCorona = new THREE.Mesh(sunCoronaGeo, sunCoronaMat);
-    sunCorona.rotation.x = Math.PI / 2;
-    orbitalGroup.add(sunCorona);
-
-    // Orbiting Bodies (Moons, Stations, Heighliners)
-    selectedSystem.orbitingBodies.forEach((body, idx) => {
-      const orbRadius = 55 + idx * 30;
+    // 1. Render Host Star(s) / Suns (Single, Binary, etc.)
+    stars.forEach((star, idx) => {
+      const isBinarySecond = idx > 0;
+      const starRadius = star.radius || 20;
+      const starGeo = new THREE.SphereGeometry(starRadius, 36, 36);
+      const starMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(star.color),
+        emissive: new THREE.Color(star.color),
+        emissiveIntensity: 1.8,
+        roughness: 0.15
+      });
+      const starMesh = new THREE.Mesh(starGeo, starMat);
       
-      // Orbit Path Line
+      const starOrbitRadius = star.orbitRadius || (isBinarySecond ? 180 : 0);
+      const starOrbitSpeed = star.orbitSpeed || 0.0003;
+      starMesh.position.set(starOrbitRadius, 0, 0);
+      starMesh.userData = { type: 'star', system: selectedSystem, isSun: true, starData: star };
+      orbitalGroup.add(starMesh);
+      interactiveObjectsRef.current.push(starMesh);
+
+      // Star Solar Corona Ring
+      const sunCoronaGeo = new THREE.RingGeometry(starRadius * 1.2, starRadius * 1.75, 48);
+      const sunCoronaMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(star.color),
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.55
+      });
+      const sunCorona = new THREE.Mesh(sunCoronaGeo, sunCoronaMat);
+      sunCorona.rotation.x = Math.PI / 2;
+      starMesh.add(sunCorona);
+
+      systemStarsRef.current.push({
+        mesh: starMesh,
+        coronaMesh: sunCorona,
+        orbitRadius: starOrbitRadius,
+        orbitSpeed: starOrbitSpeed,
+        angle: idx * Math.PI
+      });
+    });
+
+    // 2. Render All Planets in the System with their Moons
+    planets.forEach((planet, pIdx) => {
+      const pRadius = planet.orbitRadius;
+
+      // Concentric Orbit Track Line in Ecliptic Plane
       const orbitPathGeo = new THREE.BufferGeometry();
       const pts: number[] = [];
-      for (let j = 0; j <= 64; j++) {
-        const a = (j / 64) * Math.PI * 2;
-        pts.push(Math.cos(a) * orbRadius, 0, Math.sin(a) * orbRadius);
+      const segments = Math.max(64, Math.floor(pRadius * 1.2));
+      for (let j = 0; j <= segments; j++) {
+        const a = (j / segments) * Math.PI * 2;
+        pts.push(Math.cos(a) * pRadius, 0, Math.sin(a) * pRadius);
       }
       orbitPathGeo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+      
+      const isPrimary = planet.isPrimary;
       const orbitPathMat = new THREE.LineBasicMaterial({
-        color: 0x38bdf8,
+        color: isPrimary ? 0xf59e0b : 0x38bdf8,
         transparent: true,
-        opacity: 0.3
+        opacity: isPrimary ? 0.45 : 0.22
       });
       const orbitPath = new THREE.Line(orbitPathGeo, orbitPathMat);
       orbitalGroup.add(orbitPath);
 
-      // Body Mesh (Sphere for Moon, Cylinder for Heighliner)
-      let bodyMesh: THREE.Mesh;
-      if (body.type === 'heighliner_dock') {
-        const heighlinerGeo = new THREE.CylinderGeometry(2.5, 2.5, 8, 16);
-        heighlinerGeo.rotateZ(Math.PI / 2);
-        const heighlinerMat = new THREE.MeshStandardMaterial({
-          color: 0x06b6d4,
-          metalness: 0.8,
-          roughness: 0.3
+      // Planet Container (rotates around central sun)
+      const planetContainer = new THREE.Group();
+      const initialAngle = (pIdx * (Math.PI * 2 / Math.max(1, planets.length))) + 0.4;
+      planetContainer.position.set(Math.cos(initialAngle) * pRadius, 0, Math.sin(initialAngle) * pRadius);
+      planetContainer.userData = { type: 'star', system: selectedSystem, isPlanet: true, planetData: planet };
+
+      // Generate Planet Surface & Material
+      const planetSysConfig: StarSystem = {
+        ...selectedSystem,
+        surfaceTextureType: planet.surfaceTextureType || 'desert',
+        atmosphereColor: planet.atmosphereColor || selectedSystem.atmosphereColor,
+        cloudDensity: planet.cloudDensity ?? 0.5,
+        hasRings: planet.hasRings,
+        ringColor: planet.ringColor
+      };
+      const maps = PlanetTextureGenerator.generateMaps(planetSysConfig);
+      
+      const pSize = planet.size || (planet.isPrimary ? 14.5 : 10);
+      const planetGeo = new THREE.SphereGeometry(pSize, 40, 40);
+      const isWater = planet.surfaceTextureType === 'ocean' || planet.surfaceTextureType === 'imperial';
+
+      const planetMat = new THREE.MeshStandardMaterial({
+        map: maps.diffuseMap,
+        bumpMap: maps.bumpMap,
+        bumpScale: 1.1,
+        roughness: isWater ? 0.42 : 0.75,
+        metalness: planet.surfaceTextureType === 'synthetic' ? 0.45 : 0.05,
+        emissiveMap: maps.nightLightsMap,
+        emissive: new THREE.Color(0xffffff),
+        emissiveIntensity: (config.nightLightsEnabled !== false) ? 0.75 : 0.0
+      });
+      const planetMesh = new THREE.Mesh(planetGeo, planetMat);
+      planetContainer.add(planetMesh);
+
+      // Clouds (If atmospheric planet)
+      let cloudsMesh: THREE.Mesh | null = null;
+      const cDensity = planet.cloudDensity ?? 0.5;
+      if (planet.surfaceTextureType !== 'gas_giant' && cDensity > 0.05) {
+        const cloudGeo = new THREE.SphereGeometry(pSize * 1.02, 32, 32);
+        const cloudMat = new THREE.MeshStandardMaterial({
+          map: maps.cloudMap,
+          transparent: true,
+          opacity: cDensity * 0.88,
+          roughness: 0.9,
+          depthWrite: false
         });
-        bodyMesh = new THREE.Mesh(heighlinerGeo, heighlinerMat);
-      } else {
-        const bodyGeo = new THREE.SphereGeometry(body.size, 16, 16);
-        const bodyMat = new THREE.MeshStandardMaterial({
-          color: new THREE.Color(body.color),
-          roughness: 0.6
-        });
-        bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+        cloudsMesh = new THREE.Mesh(cloudGeo, cloudMat);
+        planetContainer.add(cloudsMesh);
       }
 
-      orbitalGroup.add(bodyMesh);
+      // Planetary Rings (e.g. gas giants, Arrakis custom)
+      let ringMesh: THREE.Mesh | null = null;
+      if (planet.hasRings || planet.surfaceTextureType === 'gas_giant') {
+        const ringGeo = new THREE.RingGeometry(pSize * 1.35, pSize * 2.35, 48);
+        const ringMat = new THREE.MeshStandardMaterial({
+          map: maps.ringMap || maps.diffuseMap,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.85,
+          roughness: 0.85
+        });
+        ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = Math.PI / 2 + 0.35;
+        planetContainer.add(ringMesh);
+      }
 
-      orbitalBodyMeshesRef.current.push({
-        mesh: bodyMesh,
-        radius: orbRadius,
-        speed: body.speed * 2,
-        angle: (idx * Math.PI * 2) / selectedSystem.orbitingBodies.length
+      // Atmospheric Halo
+      const atmoColor = planet.atmosphereColor || selectedSystem.atmosphereColor;
+      const atmoGeo = new THREE.SphereGeometry(pSize * 1.15, 28, 28);
+      const atmoMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(atmoColor),
+        transparent: true,
+        opacity: isPrimary ? 0.32 : 0.2,
+        side: THREE.BackSide
+      });
+      const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+      planetContainer.add(atmoMesh);
+
+      // Primary Planet Tactical Beacon Ring
+      if (isPrimary) {
+        const beaconGeo = new THREE.RingGeometry(pSize * 1.25, pSize * 1.35, 36);
+        const beaconMat = new THREE.MeshBasicMaterial({
+          color: 0xf59e0b,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.7
+        });
+        const beaconRing = new THREE.Mesh(beaconGeo, beaconMat);
+        beaconRing.rotation.x = Math.PI / 2;
+        planetContainer.add(beaconRing);
+      }
+
+      // 3. Render Moons & Orbitals Around This Specific Planet
+      const moonAnimatedObjects: {
+        mesh: THREE.Mesh;
+        orbitRadius: number;
+        orbitSpeed: number;
+        angle: number;
+      }[] = [];
+
+      planet.moons.forEach((moon, mIdx) => {
+        const mRadius = moon.orbitRadius || (pSize + 12 + mIdx * 10);
+        
+        // Mini Orbit Line around parent planet
+        const moonOrbitGeo = new THREE.BufferGeometry();
+        const moonPts: number[] = [];
+        for (let j = 0; j <= 36; j++) {
+          const a = (j / 36) * Math.PI * 2;
+          moonPts.push(Math.cos(a) * mRadius, 0, Math.sin(a) * mRadius);
+        }
+        moonOrbitGeo.setAttribute('position', new THREE.Float32BufferAttribute(moonPts, 3));
+        const moonOrbitMat = new THREE.LineBasicMaterial({
+          color: moon.type === 'heighliner_dock' ? 0x06b6d4 : 0x94a3b8,
+          transparent: true,
+          opacity: 0.28
+        });
+        const moonOrbit = new THREE.Line(moonOrbitGeo, moonOrbitMat);
+        planetContainer.add(moonOrbit);
+
+        // Moon / Station Mesh
+        let moonMesh: THREE.Mesh;
+        if (moon.type === 'heighliner_dock') {
+          const dockGeo = new THREE.CylinderGeometry(1.8, 1.8, 6, 16);
+          dockGeo.rotateZ(Math.PI / 2);
+          const dockMat = new THREE.MeshStandardMaterial({
+            color: 0x06b6d4,
+            metalness: 0.85,
+            roughness: 0.25
+          });
+          moonMesh = new THREE.Mesh(dockGeo, dockMat);
+        } else if (moon.type === 'space_station' || moon.type === 'orbital_refinery' || moon.type === 'defense_fortress') {
+          const stationGeo = new THREE.OctahedronGeometry(moon.size || 2.4, 0);
+          const stationMat = new THREE.MeshStandardMaterial({
+            color: new THREE.Color(moon.color || '#f59e0b'),
+            metalness: 0.6,
+            roughness: 0.3
+          });
+          moonMesh = new THREE.Mesh(stationGeo, stationMat);
+        } else {
+          const moonGeo = new THREE.SphereGeometry(moon.size || 2.2, 16, 16);
+          const moonMat = new THREE.MeshStandardMaterial({
+            color: new THREE.Color(moon.color || '#cbd5e1'),
+            roughness: 0.7
+          });
+          moonMesh = new THREE.Mesh(moonGeo, moonMat);
+        }
+
+        const moonAngle = (mIdx * (Math.PI * 2 / Math.max(1, planet.moons.length)));
+        moonMesh.position.set(Math.cos(moonAngle) * mRadius, 0, Math.sin(moonAngle) * mRadius);
+        planetContainer.add(moonMesh);
+
+        moonAnimatedObjects.push({
+          mesh: moonMesh,
+          orbitRadius: mRadius,
+          orbitSpeed: moon.orbitSpeed || 0.01,
+          angle: moonAngle
+        });
+      });
+
+      orbitalGroup.add(planetContainer);
+      interactiveObjectsRef.current.push(planetContainer);
+
+      systemPlanetsAnimatedRef.current.push({
+        planetContainer: planetContainer,
+        planetMesh: planetMesh,
+        cloudsMesh: cloudsMesh,
+        ringMesh: ringMesh,
+        orbitAngle: initialAngle,
+        orbitRadius: pRadius,
+        orbitSpeed: planet.orbitSpeed || (0.002 / (pIdx + 1)),
+        rotSpeed: (config.planetRotationSpeed ?? 1.0) * (planet.rotationSpeed || 0.003),
+        planetData: planet,
+        moons: moonAnimatedObjects
       });
     });
-  }, [zoomLevel, selectedSystem]);
+  }, [
+    zoomLevel, 
+    selectedSystem, 
+    config.surfaceBumpStrength, 
+    config.nightLightsEnabled, 
+    config.showShieldMeshes, 
+    config.planetRotationSpeed, 
+    getThemeColor
+  ]);
 
   // Build Planetary / Tactical Holosphere (Zoom Level = 'planetary')
   useEffect(() => {
@@ -741,7 +1039,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
       targetCamPosRef.current.set(0, 240, 520);
       targetLookAtRef.current.set(0, 0, 0);
     } else if (zoomLevel === 'system') {
-      targetCamPosRef.current.set(0, 45, 155);
+      targetCamPosRef.current.set(0, 55, 175);
       targetLookAtRef.current.set(0, 0, 0);
     } else if (zoomLevel === 'planetary') {
       targetCamPosRef.current.set(0, 22, 88);
@@ -774,12 +1072,44 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
         item.pulseMesh.position.copy(pos);
       });
 
-      // Animate Orbiting Bodies at System Level
+      // Animate all textured planets in Galactic View
+      if (zoomLevel === 'galactic') {
+        galacticPlanetsRef.current.forEach((item) => {
+          item.mesh.rotation.y += item.rotSpeed;
+          if (item.cloudsMesh) {
+            item.cloudsMesh.rotation.y += item.rotSpeed * 1.35;
+          }
+        });
+      }
+
+      // Animate All Stars, Planets & Orbiting Moons at System Level
       if (zoomLevel === 'system') {
-        orbitalBodyMeshesRef.current.forEach((bodyObj) => {
-          bodyObj.angle += bodyObj.speed;
-          bodyObj.mesh.position.x = Math.cos(bodyObj.angle) * bodyObj.radius;
-          bodyObj.mesh.position.z = Math.sin(bodyObj.angle) * bodyObj.radius;
+        // Animate binary stars if present
+        systemStarsRef.current.forEach((starObj) => {
+          if (starObj.orbitRadius > 0) {
+            starObj.angle += starObj.orbitSpeed;
+            starObj.mesh.position.x = Math.cos(starObj.angle) * starObj.orbitRadius;
+            starObj.mesh.position.z = Math.sin(starObj.angle) * starObj.orbitRadius;
+          }
+        });
+
+        // Animate all planets and their respective moons
+        systemPlanetsAnimatedRef.current.forEach((planetObj) => {
+          planetObj.orbitAngle += planetObj.orbitSpeed;
+          planetObj.planetContainer.position.x = Math.cos(planetObj.orbitAngle) * planetObj.orbitRadius;
+          planetObj.planetContainer.position.z = Math.sin(planetObj.orbitAngle) * planetObj.orbitRadius;
+          planetObj.planetMesh.rotation.y += planetObj.rotSpeed;
+
+          if (planetObj.cloudsMesh) {
+            planetObj.cloudsMesh.rotation.y += planetObj.rotSpeed * 1.35;
+          }
+
+          // Animate moons orbiting around this parent planet
+          planetObj.moons.forEach((moonObj) => {
+            moonObj.angle += moonObj.orbitSpeed;
+            moonObj.mesh.position.x = Math.cos(moonObj.angle) * moonObj.orbitRadius;
+            moonObj.mesh.position.z = Math.sin(moonObj.angle) * moonObj.orbitRadius;
+          });
         });
       }
 
@@ -809,13 +1139,11 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
         targetPos.x += p.x * parallaxFactor;
         targetPos.y += p.y * (parallaxFactor * 0.6);
 
-        // Apply user orbit rotation around target
-        if (zoomLevel !== 'galactic') {
-          const orbitDist = targetPos.length();
-          targetPos.x = orbitDist * Math.sin(orbitRotationRef.current.theta) * Math.cos(orbitRotationRef.current.phi);
-          targetPos.y = orbitDist * Math.sin(orbitRotationRef.current.phi);
-          targetPos.z = orbitDist * Math.cos(orbitRotationRef.current.theta) * Math.cos(orbitRotationRef.current.phi);
-        }
+        // Apply user orbit rotation around target across all views (Galactic, System, Planetary)
+        const orbitDist = targetPos.length();
+        targetPos.x = orbitDist * Math.sin(orbitRotationRef.current.theta) * Math.cos(orbitRotationRef.current.phi);
+        targetPos.y = orbitDist * Math.sin(orbitRotationRef.current.phi);
+        targetPos.z = orbitDist * Math.cos(orbitRotationRef.current.theta) * Math.cos(orbitRotationRef.current.phi);
 
         cam.position.lerp(targetPos, 0.045);
         currentLookAtRef.current.lerp(targetLookAtRef.current, 0.045);
@@ -918,6 +1246,8 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
             onSelectSystem(sys);
             if (zoomLevel === 'galactic') {
               onZoomChange('system');
+            } else if (zoomLevel === 'system') {
+              onZoomChange('planetary');
             }
           } else if (rootObj.userData.type === 'poi') {
             const poi = rootObj.userData.poi as TacticalPOI;
@@ -1013,4 +1343,7 @@ export const HolosphereCanvas: React.FC<HolosphereCanvasProps> = ({
       )}
     </div>
   );
-};
+});
+
+HolosphereCanvas.displayName = 'HolosphereCanvas';
+

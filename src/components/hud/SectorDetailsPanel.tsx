@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StarSystem, TacticalPOI, ZoomLevel, HouseInfo } from '../../types/landsraad';
 import { HOUSES_DATA } from '../../data/landsraadData';
+import { getSystemPlanetsAndStars } from '../../data/systemAstronomicalData';
 import { HouseSigilImage } from '../common/HouseSigilImage';
 import { 
   Shield, 
@@ -24,7 +25,8 @@ import {
   Edit3,
   UploadCloud,
   Image as ImageIcon,
-  Trash2
+  Trash2,
+  Sun
 } from 'lucide-react';
 
 interface SectorDetailsPanelProps {
@@ -54,6 +56,10 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'astronomy' | 'surface_pois' | 'orbitals'>('astronomy');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Retrieve complete canonical astronomical architecture (Suns, Planets, Moons)
+  const { stars, planets } = getSystemPlanetsAndStars(system);
+  const totalMoonsCount = planets.reduce((acc, p) => acc + p.moons.length, 0);
   
   const house = houses[system.controllingHouse] || houses.corrino || {
     id: 'unknown',
@@ -258,7 +264,7 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
               : 'text-neutral-400 hover:text-neutral-200'
           }`}
         >
-          ORBITES ({system.orbitingBodies.length})
+          LUNES & ORBITES ({totalMoonsCount})
           {activeTab === 'orbitals' && (
             <motion.div
               layoutId="dossierTabUnderline"
@@ -287,8 +293,45 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
                 « {system.loreSnippet} »
               </div>
 
-              {/* Astrophysical Parameters Grid */}
+              {/* Soleils & Étoiles du Système */}
               <div className="space-y-2">
+                <span className="text-[10px] text-[#f59e0b] uppercase font-bold tracking-widest flex items-center gap-1">
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  Soleil{stars.length > 1 ? 's & Étoiles Binaires' : ' du Système'} ({stars.length})
+                </span>
+
+                <div className="space-y-1.5">
+                  {stars.map((st) => (
+                    <div 
+                      key={st.id} 
+                      className="p-2.5 rounded bg-neutral-900/80 border border-neutral-800 space-y-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className="w-3 h-3 rounded-full inline-block shrink-0 shadow-sm"
+                            style={{ backgroundColor: st.color, boxShadow: `0 0 8px ${st.color}` }}
+                          />
+                          <span className="font-bold text-white text-xs">{st.name}</span>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-white/10 text-amber-300 border border-white/15">
+                          Classe : {st.spectralClass}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-neutral-300 font-sans">
+                        {st.description}
+                      </p>
+                      <div className="flex justify-between text-[10px] text-neutral-500 pt-1">
+                        <span>Luminosité : {st.luminosity ?? 1.0} L☉</span>
+                        <span>Masse : {st.mass ?? 1.0} M☉</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Astrophysical Parameters Grid */}
+              <div className="space-y-2 pt-1 border-t border-neutral-800">
                 <span className="text-[10px] text-[#f59e0b] uppercase font-bold tracking-widest flex items-center gap-1">
                   <Compass className="w-3.5 h-3.5" />
                   Spécifications Astrophysiques
@@ -296,7 +339,7 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
                 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-2 rounded bg-neutral-900/70 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-400 block">Étoile Primaire</span>
+                    <span className="text-[10px] text-neutral-400 block">Système Stellaire</span>
                     <span className="text-[#f3e8d2] font-bold block truncate">{system.starName}</span>
                   </div>
                   <div className="p-2 rounded bg-neutral-900/70 border border-neutral-800">
@@ -314,25 +357,75 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
                 </div>
               </div>
 
-              {/* Planetary Geophysics */}
+              {/* Famille Planétaire Complète */}
               <div className="space-y-2 pt-1 border-t border-neutral-800">
                 <span className="text-[10px] text-[#f59e0b] uppercase font-bold tracking-widest flex items-center gap-1">
-                  <Globe className="w-3.5 h-3.5" />
-                  Métriques Planétaires
+                  <Globe className="w-3.5 h-3.5 text-cyan-400" />
+                  Famille Planétaire Complète ({planets.length} Mondes)
+                </span>
+
+                <div className="space-y-1.5">
+                  {planets.map((pl, pIdx) => (
+                    <div 
+                      key={pl.id}
+                      className={`p-2.5 rounded-lg border transition-all ${
+                        pl.isPrimary 
+                          ? 'bg-amber-950/20 border-[#f59e0b]/50 shadow-[0_0_10px_rgba(245,158,11,0.15)]' 
+                          : 'bg-neutral-900/60 border-neutral-800'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold text-neutral-400">
+                            {pl.orderIndex || pl.romanNumeral || `#${pIdx + 1}`}
+                          </span>
+                          <span className={`font-bold text-xs ${pl.isPrimary ? 'text-amber-300' : 'text-white'}`}>
+                            {pl.name}
+                          </span>
+                          {pl.isPrimary && (
+                            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                              Capitale / Habité
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-neutral-300 border border-white/10 font-mono">
+                          {pl.classification}
+                        </span>
+                      </div>
+
+                      <p className="text-[11px] text-neutral-300 font-sans mt-1">
+                        {pl.description}
+                      </p>
+
+                      <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-1 mt-1 border-t border-white/5">
+                        <span>Distance : {pl.distanceAU ? `${pl.distanceAU} UA` : `${(pl.orbitRadius * 0.015 + 0.3).toFixed(2)} UA`}</span>
+                        <span>Rayon : {pl.radiusKm ? `${pl.radiusKm.toLocaleString()} km` : `${Math.round((pl.size || 10) * 680).toLocaleString()} km`}</span>
+                        <span className="text-cyan-400">{pl.moons?.length ?? 0} lune(s)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Planetary Geophysics for Primary World */}
+              <div className="space-y-2 pt-1 border-t border-neutral-800">
+                <span className="text-[10px] text-[#f59e0b] uppercase font-bold tracking-widest flex items-center gap-1">
+                  <Layers className="w-3.5 h-3.5" />
+                  Métriques Géophysiques : {system.primaryPlanet}
                 </span>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <div className="p-2 rounded bg-neutral-900/70 border border-neutral-800 text-center">
                     <span className="text-[9px] text-neutral-400 block">Diamètre</span>
-                    <span className="text-white font-bold block">{system.planetaryMetrics.diameterKm.toLocaleString()} km</span>
+                    <span className="text-white font-bold block">{(system.planetaryMetrics?.diameterKm ?? 12742).toLocaleString()} km</span>
                   </div>
                   <div className="p-2 rounded bg-neutral-900/70 border border-neutral-800 text-center">
                     <span className="text-[9px] text-neutral-400 block">Gravité</span>
-                    <span className="text-[#fbbf24] font-bold block">{system.planetaryMetrics.gravityG} G</span>
+                    <span className="text-[#fbbf24] font-bold block">{system.planetaryMetrics?.gravityG ?? 1.0} G</span>
                   </div>
                   <div className="p-2 rounded bg-neutral-900/70 border border-neutral-800 text-center">
                     <span className="text-[9px] text-neutral-400 block">Jour / Année</span>
-                    <span className="text-[#38bdf8] font-bold block">{system.planetaryMetrics.dayLengthHours}h / {system.planetaryMetrics.yearLengthDays}j</span>
+                    <span className="text-[#38bdf8] font-bold block">{system.planetaryMetrics?.dayLengthHours ?? 24}h / {system.planetaryMetrics?.yearLengthDays ?? 365}j</span>
                   </div>
                 </div>
 
@@ -434,7 +527,7 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
             </motion.div>
           )}
 
-          {/* Tab 3: Orbital Bodies */}
+          {/* Tab 3: Orbital Bodies & Moons by Planet */}
           {activeTab === 'orbitals' && (
             <motion.div
               key="tab-orbitals"
@@ -442,34 +535,61 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="space-y-3"
+              className="space-y-4"
             >
-              <span className="text-[10px] text-neutral-400 uppercase tracking-widest block">
-                Satellites Naturels & Mégastructures ({system.orbitingBodies.length})
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-neutral-400 uppercase tracking-widest">
+                  Satellites Naturels & Mégastructures ({totalMoonsCount})
+                </span>
+                <span className="text-[10px] text-amber-400 font-bold">
+                  {planets.length} Planètes
+                </span>
+              </div>
 
-              <div className="space-y-2">
-                {system.orbitingBodies.map((body) => (
-                  <div 
-                    key={body.id}
-                    className="p-3 rounded-lg bg-neutral-900/60 border border-neutral-800 space-y-1.5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-white text-xs flex items-center gap-1.5">
-                        <Orbit className="w-3.5 h-3.5 text-cyan-400" />
-                        {body.name}
+              <div className="space-y-4">
+                {planets.map((planet, pIdx) => (
+                  <div key={planet.id} className="space-y-2">
+                    <div className="flex items-center gap-2 pb-1 border-b border-neutral-800">
+                      <Globe className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="text-xs font-bold text-white">
+                        {planet.orderIndex || planet.romanNumeral || `#${pIdx + 1}`} — {planet.name}
                       </span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-neutral-300 border border-white/10 uppercase">
-                        {body.type.replace('_', ' ')}
+                      <span className="text-[10px] text-neutral-400 font-mono">
+                        ({planet.moons?.length ?? 0} lune{(planet.moons?.length ?? 0) > 1 ? 's' : ''})
                       </span>
                     </div>
-                    <p className="text-[11px] text-neutral-300 font-sans">
-                      {body.description}
-                    </p>
-                    <div className="text-[10px] text-neutral-500 flex justify-between pt-1">
-                      <span>Rayon Orbital : {body.radius} k-km</span>
-                      <span>Vitesse : {(body.speed * 1000).toFixed(1)} km/s</span>
-                    </div>
+
+                    {!planet.moons || planet.moons.length === 0 ? (
+                      <div className="p-2 text-[11px] text-neutral-500 italic bg-neutral-900/30 rounded border border-neutral-900">
+                        Aucun satellite naturel majeur recensé dans les tables de la Guilde.
+                      </div>
+                    ) : (
+                      <div className="space-y-2 pl-2">
+                        {planet.moons.map((moon) => (
+                          <div 
+                            key={moon.id}
+                            className="p-2.5 rounded-lg bg-neutral-900/70 border border-neutral-800 space-y-1"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-white text-xs flex items-center gap-1.5">
+                                <Orbit className="w-3.5 h-3.5 text-cyan-400" />
+                                {moon.name}
+                              </span>
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-neutral-300 border border-white/10 uppercase font-mono">
+                                {(moon.type || 'natural').replace('_', ' ')}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-neutral-300 font-sans">
+                              {moon.description}
+                            </p>
+                            <div className="text-[10px] text-neutral-500 flex justify-between pt-1">
+                              <span>Rayon : {(moon.radiusKm ?? Math.round((moon.size || 2.2) * 550)).toLocaleString()} km</span>
+                              <span>Période : {moon.orbitalPeriodDays ?? ((moon.orbitRadius || 20) * 0.15).toFixed(1)} jours</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

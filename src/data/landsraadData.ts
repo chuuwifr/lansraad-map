@@ -1639,16 +1639,16 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
     ]
   },
 
-  // 21. ECAZ - Alpha Centauri B
+  // 21. ECAZ - Alpha Centauri B (Paradis des Sculpteurs)
   {
     id: 'ecaz-system',
-    name: 'Alpha Centauri B // Ecaz (Paradis Botanique)',
+    name: 'Alpha Centauri B // Ecaz (Paradis des Sculpteurs)',
     starName: 'Alpha Centauri B',
     starType: 'Étoile Solaire Tempérée (G2V)',
     spectralClass: 'G2V',
     starColor: '#a855f7',
     starRadius: 7.1,
-    primaryPlanet: 'Ecaz',
+    primaryPlanet: 'Ecaz (Quatrième Monde d\'Alpha Centauri B)',
     coordinates: [-60, -130, -60],
     controllingHouse: 'ecaz',
     strategicImportance: 'Secondaire',
@@ -1658,7 +1658,7 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
     spiceOutputPerCycle: 0,
     defenseShieldActive: true,
     fleetCount: 15,
-    description: 'Planète paradisiaque aux forêts d\'arbres Fogwood et aux jardins de plantes médicinales et artistiques.',
+    description: 'Quatrième planète d\'Alpha Centauri B, renommée comme « le paradis des sculpteurs ». Monde couvert de forêts d\'arbres Fogwood dont le bois malléable se sculpte par la seule pensée humaine, et source des drogues narcotiques majeures de l\'Imperium (Semuta, Elacca, Vérité).',
     atmosphereColor: '#a855f7',
     surfaceTextureType: 'lush',
     moonsCount: 2,
@@ -1668,10 +1668,10 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
       dayLengthHours: 24.5,
       yearLengthDays: 380,
       surfaceTempAvgC: 23,
-      atmosphereComposition: '78% N2, 21% O2, Parfums et pollens télépathiques Fogwood',
+      atmosphereComposition: '78% N2, 21% O2, Parfums et pollens de Fogwood & bois d\'Elacca',
       populationTotal: '320 Millions',
       capitalSettlement: 'Palais Botanique d\'Ecaz',
-      primaryExports: ['Bois Sculpté Fogwood', 'Drogue Semuta', 'Élixirs de Sapho', 'Art Vivant']
+      primaryExports: ['Bois Sculpté Fogwood', 'Drogue Semuta (Résidus de Cristal)', 'Bois d\'Elacca (Narcotique)', 'Drogue de Vérité (Verite)']
     },
     loreSnippet: 'Le Fogwood réagit à la pensée de l\'artiste pour créer les sculptures les plus prisées du Landsraad.',
     orbitingBodies: [
@@ -1683,18 +1683,18 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
         size: 3.0,
         speed: 0.007,
         color: '#d8b4fe',
-        description: 'Lune luxuriante couverte de serres orbitales.'
+        description: 'Lune luxuriante couverte de serres orbitales et de jardins hydroponiques.'
       }
     ],
     tacticalPOIs: [
       {
         id: 'poi-fogwood-groves',
-        name: 'Bosquets Sacrés de Fogwood & Raffineries de Semuta',
+        name: 'Bosquets Sacrés de Fogwood & Raffineries d\'Élixirs',
         type: 'industrial',
         controllingHouse: 'ecaz',
         coordinates: [15.0, -80.0],
         securityLevel: 'HIGH',
-        description: 'Centres d\'extraction des substances psychotropes les plus pures du marché CHOAM.',
+        description: 'Centres d\'extraction des substances psychotropes et de récolte du bois télépathique.',
         tacticalNotes: 'Forêts vivantes surveillées par des gardes d\'honneur et barrières soniques.',
         threatLevel: 'Faible'
       }
@@ -1826,16 +1826,16 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
     ]
   },
 
-  // 24. GRUMMAN - Chi Draconis
+  // 24. GRUMMAN - Niushe (Fief Moritani)
   {
     id: 'grumman',
-    name: 'Chi Draconis // Grumman (Fief Moritani)',
-    starName: 'Chi Draconis',
+    name: 'Niushe // Grumman (Fief Moritani)',
+    starName: 'Niushe (Chi Draconis)',
     starType: 'Étoile Naine Jaune-Blanche (F7V)',
     spectralClass: 'F7V',
     starColor: '#ef4444',
     starRadius: 6.7,
-    primaryPlanet: 'Grumman (Fief Moritani)',
+    primaryPlanet: 'Grumman (Deuxième Monde de Niushe)',
     coordinates: [-110, -160, -120],
     controllingHouse: 'moritani',
     strategicImportance: 'Secondaire',
@@ -1845,7 +1845,7 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
     spiceOutputPerCycle: 0,
     defenseShieldActive: true,
     fleetCount: 26,
-    description: 'Monde montagneux rude, fief de la Maison Moritani. Foyer de mercenaires sans pitié et d\'usines de gaz de combat toxiques.',
+    description: 'Deuxième planète du système Niushe. Monde montagneux austère et fief de la Maison Moritani. Foyer de maîtres assassins sans merci, célèbre pour ses guerres de vendetta (Kanly) contre les Maisons Ginaz et Ecaz.',
     atmosphereColor: '#dc2626',
     surfaceTextureType: 'volcanic',
     moonsCount: 2,
@@ -1858,7 +1858,7 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
       atmosphereComposition: '74% N2, 19% O2, 7% Composés chlorés et fumées volcaniques',
       populationTotal: '410 Millions',
       capitalSettlement: 'Citadelle de Ritk',
-      primaryExports: ['Troupes Mercenaires', 'Poisons de Combat', 'Armes Chimiques', 'Minerais Noirs']
+      primaryExports: ['Troupes Mercenaires & Assassins', 'Poisons de Combat', 'Armes Chimiques', 'Minerais Noirs']
     },
     loreSnippet: 'Sur Grumman, le Kanly ne s\'arrête que lorsque la dernière lignée ennemie est anéantie.',
     orbitingBodies: [
@@ -1870,7 +1870,7 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
         size: 2.7,
         speed: 0.007,
         color: '#7f1d1d',
-        description: 'Lune basaltique d\'essais balistiques.'
+        description: 'Lune basaltique d\'essais balistiques et de fortifications souterraines.'
       }
     ],
     tacticalPOIs: [
@@ -1886,5 +1886,440 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
         threatLevel: 'Critique'
       }
     ]
+  },
+
+  // 25. KOLHAR - Epsilon Trianguli (Berceau de la Guilde)
+  {
+    id: 'kolhar',
+    name: 'Epsilon Trianguli // Kolhar',
+    starName: 'Epsilon Trianguli',
+    starType: 'Étoile Blanche-Bleue Navigatrice (A6V)',
+    spectralClass: 'A6V',
+    starColor: '#06b6d4',
+    starRadius: 7.5,
+    primaryPlanet: 'Kolhar (Deuxième Monde de Trianguli)',
+    coordinates: [-105, -135, 120],
+    controllingHouse: 'guild',
+    strategicImportance: 'Crucial',
+    distanceFromTerraLy: 115,
+    distanceFromArrakisLy: 290,
+    guildTariffSolaris: 12000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 30,
+    description: 'Premier grand chantier naval historique de la Guilde Spatiale, où Norma Cenva conçut les premiers moteurs de repliement Holtzman pendant le Jihad Butlérien.',
+    atmosphereColor: '#22d3ee',
+    surfaceTextureType: 'synthetic',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 13300,
+      gravityG: 1.01,
+      dayLengthHours: 23.8,
+      yearLengthDays: 360,
+      surfaceTempAvgC: 18,
+      atmosphereComposition: '77% N2, 21% O2, 1.8% Gaz Nobles, 0.2% Particules d\'Épice',
+      populationTotal: '35 Millions de Techniciens et Navigateurs',
+      capitalSettlement: 'Spire Centrale de Cenva',
+      primaryExports: ['Heighliners de Saut', 'Moteurs Holtzman Supraluminiques', 'Gyro-compas Prescients']
+    },
+    loreSnippet: 'Ici naquit le repliement de l\'espace : là où la machine faillit, la prescience humaine triompha.',
+    orbitingBodies: [
+      {
+        id: 'moon-kolhar-dock',
+        name: 'Chantier Spatial Foldspace Alpha',
+        type: 'space_station',
+        radius: 65,
+        size: 3.2,
+        speed: 0.009,
+        color: '#38bdf8',
+        description: 'Quai de lancement orbital pour les superstructures Heighliner.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-kolhar-spire',
+        name: 'Sanctuaire Stellaire de Norma Cenva',
+        type: 'sacred_site',
+        controllingHouse: 'guild',
+        coordinates: [15.2, 85.0],
+        securityLevel: 'IMPERIAL',
+        description: 'Monument fondateur érigé en hommage à la première Navigatrice de l\'espace plié.',
+        tacticalNotes: 'Zone sous immunité et inviolabilité impériale perpétuelle.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 26. HARMONTHEP - Gamma Piscium (La 6ème Étape Zensunni)
+  {
+    id: 'harmonthep',
+    name: 'Gamma Piscium // Harmonthep',
+    starName: 'Gamma Piscium',
+    starType: 'Géante Jaune Déclinante (G9III)',
+    spectralClass: 'G9III',
+    starColor: '#f59e0b',
+    starRadius: 8.2,
+    primaryPlanet: 'Harmonthep (La Terre Sèche)',
+    coordinates: [-175, -60, -130],
+    controllingHouse: 'fremen',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 130,
+    distanceFromArrakisLy: 275,
+    guildTariffSolaris: 31000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: false,
+    fleetCount: 4,
+    description: 'La mystique sixième étape de l\'Exode des errants Zensunni avant leur arrivée finale sur Arrakis. Monde de canyons profonds et de stèles sacrées gravées.',
+    atmosphereColor: '#f97316',
+    surfaceTextureType: 'desert',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12900,
+      gravityG: 0.96,
+      dayLengthHours: 24.5,
+      yearLengthDays: 390,
+      surfaceTempAvgC: 44,
+      atmosphereComposition: '76% N2, 21% O2, 2% CO2, 1% Poussières de Silice',
+      populationTotal: '850 000 Descendants Nomades',
+      capitalSettlement: 'Sietch Al-Qadim',
+      primaryExports: ['Reliques Zensunni', 'Pierres de Prière', 'Poteries des Canyons']
+    },
+    loreSnippet: 'Harmonthep a bu les larmes des errants ; ses sables murmurent encore le chant du retour.',
+    orbitingBodies: [
+      {
+        id: 'moon-harmonthep-1',
+        name: 'Lune du Pèlerin // Pilgrim\'s Echo',
+        type: 'moon',
+        radius: 65,
+        size: 2.5,
+        speed: 0.008,
+        color: '#fed7aa',
+        description: 'Lune rocheuse gravée des symboles de la foi errante.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-harmonthep-sanctuary',
+        name: 'Grand Sanctuaire de l\'Exode',
+        type: 'sacred_site',
+        controllingHouse: 'fremen',
+        coordinates: [-22.5, 45.1],
+        securityLevel: 'CLANDESTINE',
+        description: 'Temple creusé dans la falaise contenant les récits gravés du Jihad et de l\'esclavage de Poritrin.',
+        tacticalNotes: 'Gardé par des ermites guerriers dévoués.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 27. SOL // OLD EARTH (TERRA / SYNCHRONY)
+  {
+    id: 'terra',
+    name: 'Sol // Old Earth (Terra, Synchrony)',
+    starName: 'Sol (Le Soleil Antique)',
+    starType: 'Naine Jaune Berceau (G2V)',
+    spectralClass: 'G2V',
+    starColor: '#fbbf24',
+    starRadius: 7.0,
+    primaryPlanet: 'Old Earth (Troisième Planète)',
+    coordinates: [-85, 30, -35],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 0,
+    distanceFromArrakisLy: 310,
+    guildTariffSolaris: 22000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 14,
+    description: 'Le berceau originel de l\'humanité. Monde devenu sanctuaire mémoriel après la libération du joug des Titans et du réseau Omnius par le Jihad Butlérien.',
+    atmosphereColor: '#38bdf8',
+    surfaceTextureType: 'ocean',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12742,
+      gravityG: 1.00,
+      dayLengthHours: 24.0,
+      yearLengthDays: 365,
+      surfaceTempAvgC: 15,
+      atmosphereComposition: '78.08% N2, 20.95% O2, 0.93% Ar, 0.04% CO2',
+      populationTotal: '2.5 Millions de Gardiens et Archivistes',
+      capitalSettlement: 'Cité Mémoriale de Geneva',
+      primaryExports: ['Reliques Terrestres', 'Archives Historiques Pré-Jihad', 'Artefacts Primaires']
+    },
+    loreSnippet: 'D\'ici partit l\'étincelle humaine vers les étoiles ; ici se dresse le souvenir de notre liberté.',
+    orbitingBodies: [
+      {
+        id: 'moon-luna-prime',
+        name: 'La Lune // Luna',
+        type: 'moon',
+        radius: 65,
+        size: 3.1,
+        speed: 0.008,
+        color: '#e2e8f0',
+        description: 'Le tout premier satellite foulé par l\'humanité aux temps pré-spatiaux.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-terra-archives',
+        name: 'Grand Dôme des Origines Humaines',
+        type: 'sacred_site',
+        controllingHouse: 'corrino',
+        coordinates: [46.2, 6.1],
+        securityLevel: 'IMPERIAL',
+        description: 'Crypte de stase conservant la mémoire génétique et textuelle des premiers millénaires de l\'Humanité.',
+        tacticalNotes: 'Protégé par une garnison conjointe Impériale et Landsraad.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 28. PALMA - Alpha Pavonis
+  {
+    id: 'palma',
+    name: 'Alpha Pavonis // Palma',
+    starName: 'Alpha Pavonis',
+    starType: 'Étoile Bleue Tempérée (B2IV)',
+    spectralClass: 'B2IV',
+    starColor: '#a78bfa',
+    starRadius: 7.4,
+    primaryPlanet: 'Palma (Monde des Mères)',
+    coordinates: [-195, 90, -80],
+    controllingHouse: 'bene_gesserit',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 180,
+    distanceFromArrakisLy: 330,
+    guildTariffSolaris: 24000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 18,
+    description: 'Centre d\'éducation avancé et grenier agricole stratégique du Bene Gesserit. Arbore d\'immenses vergers et archives de sélection génétique.',
+    atmosphereColor: '#c084fc',
+    surfaceTextureType: 'lush',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 13100,
+      gravityG: 0.99,
+      dayLengthHours: 23.5,
+      yearLengthDays: 350,
+      surfaceTempAvgC: 22,
+      atmosphereComposition: '77% N2, 21% O2, 1.5% Ar, 0.5% CO2',
+      populationTotal: '380 Millions',
+      capitalSettlement: 'Citadelle de Dar-es-Balat',
+      primaryExports: ['Plantes Médicinales', 'Graines Génétiquement Pures', 'Élixirs de Vie']
+    },
+    loreSnippet: 'Sur Palma, chaque graine est une promesse d\'équilibre pour les générations futures.',
+    orbitingBodies: [
+      {
+        id: 'moon-palma-1',
+        name: 'Lune Sœur // Sisterhood Cradle',
+        type: 'moon',
+        radius: 65,
+        size: 2.6,
+        speed: 0.008,
+        color: '#ddd6fe',
+        description: 'Lune abritant des serres biologiques isolées sous vide partiel.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-palma-school',
+        name: 'Conservatoire Botanique & Génétique de Palma',
+        type: 'academy',
+        controllingHouse: 'bene_gesserit',
+        coordinates: [28.0, -35.0],
+        securityLevel: 'MAXIMAL',
+        description: 'Institut de recherche sur les hybridations végétales et la survie en milieux extrêmes.',
+        tacticalNotes: 'Défense passive Prana-Bindu et réseau d\'alerte précoce.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 29. ROMO - Epsilon Eridani C
+  {
+    id: 'romo',
+    name: 'Epsilon Eridani C // Romo',
+    starName: 'Epsilon Eridani C',
+    starType: 'Naine Orange (K4V)',
+    spectralClass: 'K4V',
+    starColor: '#38bdf8',
+    starRadius: 6.8,
+    primaryPlanet: 'Romo (Comptoir Vernius)',
+    coordinates: [-225, -95, 115],
+    controllingHouse: 'ix',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 10.5,
+    distanceFromArrakisLy: 320,
+    guildTariffSolaris: 19000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 15,
+    description: 'Poste commercial avancé et complexe de synthèse cristalline de la Maison Vernius d\'Ix.',
+    atmosphereColor: '#7dd3fc',
+    surfaceTextureType: 'synthetic',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12600,
+      gravityG: 0.95,
+      dayLengthHours: 24.2,
+      yearLengthDays: 340,
+      surfaceTempAvgC: 16,
+      atmosphereComposition: '75% N2, 20% O2, 4% Gaz de Synthèse, 1% Vapeurs Métalliques',
+      populationTotal: '110 Millions',
+      capitalSettlement: 'Comptoir Holtzman de Romo',
+      primaryExports: ['Cristaux Supraconducteurs', 'Composants Holtzman', 'Blindages Polarisés']
+    },
+    loreSnippet: 'Romo est la porte d\'Ix sur le Landsraad : l\'or y achète la technologie de demain.',
+    orbitingBodies: [
+      {
+        id: 'moon-romo-1',
+        name: 'Spire Orbitale de Négociation',
+        type: 'space_station',
+        radius: 65,
+        size: 2.8,
+        speed: 0.009,
+        color: '#38bdf8',
+        description: 'Bourse d\'échange technologique gérée conjointement avec la CHOAM.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-romo-foundry',
+        name: 'Fonderie de Cristaux Holtzman',
+        type: 'industrial',
+        controllingHouse: 'ix',
+        coordinates: [10.5, 55.0],
+        securityLevel: 'HIGH',
+        description: 'Usine hautement automatisée produisant les noyaux de générateurs de boucliers.',
+        tacticalNotes: 'Champs anti-intrusion électromagnétiques actifs.',
+        threatLevel: 'Modéré'
+      }
+    ]
+  },
+
+  // 30. GAMONT - Epsilon Eridani B
+  {
+    id: 'gamont',
+    name: 'Epsilon Eridani B // Gamont',
+    starName: 'Gamont Star',
+    starType: 'Étoile Dorée Chaude (F7V)',
+    spectralClass: 'F7V',
+    starColor: '#fde047',
+    starRadius: 7.1,
+    primaryPlanet: 'Gamont (Planète du Plaisir)',
+    coordinates: [-170, -45, 95],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 10.5,
+    distanceFromArrakisLy: 315,
+    guildTariffSolaris: 16000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 12,
+    description: 'Monde légendaire de villégiature et de plaisirs pour la noblesse du Landsraad. Célèbre pour ses cours de courtisanes, ses thermes volcaniques et ses jeux diplomatiques feutrés.',
+    atmosphereColor: '#fbbf24',
+    surfaceTextureType: 'imperial',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 13500,
+      gravityG: 1.02,
+      dayLengthHours: 24.8,
+      yearLengthDays: 370,
+      surfaceTempAvgC: 26,
+      atmosphereComposition: '78% N2, 21% O2, 0.8% Vapeurs Aromatiques, 0.2% CO2',
+      populationTotal: '620 Millions',
+      capitalSettlement: 'Palais des Mille Délices',
+      primaryExports: ['Parfums Rares', 'Soies Thermiques', 'Vins Diplomatiques', 'Divertissements de Cour']
+    },
+    loreSnippet: 'À Gamont, les traités s\'écrivent dans la soie et se scellent dans le vin de fête.',
+    orbitingBodies: [
+      {
+        id: 'moon-gamont-1',
+        name: 'Lune Dorée // Hedon',
+        type: 'moon',
+        radius: 65,
+        size: 2.7,
+        speed: 0.008,
+        color: '#fde047',
+        description: 'Lune abritant les casinos orbitaux et palais suspendus de la haute noblesse.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-gamont-palace',
+        name: 'Grand Casino & Thermes de Gamont',
+        type: 'capital',
+        controllingHouse: 'corrino',
+        coordinates: [34.0, -18.0],
+        securityLevel: 'HIGH',
+        description: 'Point de rencontre discret des émissaires de toutes les Grandes Maisons.',
+        tacticalNotes: 'Neutralité diplomatique stricte surveillée par les Mentats.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 31. SIKUN - Delta Velorum
+  {
+    id: 'sikun',
+    name: 'Delta Velorum // Sikun',
+    starName: 'Delta Velorum',
+    starType: 'Étoile Blanche Fluviale (A1IV)',
+    spectralClass: 'A1IV',
+    starColor: '#0ea5e9',
+    starRadius: 7.8,
+    primaryPlanet: 'Sikun (Monde des Condensateurs)',
+    coordinates: [-45, -120, -160],
+    controllingHouse: 'guild',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 80,
+    distanceFromArrakisLy: 260,
+    guildTariffSolaris: 21000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 22,
+    description: 'Siège de la corporation des transporteurs d\'eau de la Guilde. Immenses flottes de navires-citernes assurant l\'approvisionnement des mondes arides.',
+    atmosphereColor: '#38bdf8',
+    surfaceTextureType: 'ocean',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 14200,
+      gravityG: 1.08,
+      dayLengthHours: 25.0,
+      yearLengthDays: 410,
+      surfaceTempAvgC: 12,
+      atmosphereComposition: '76% N2, 22% O2, 2% Humidité Pure Saturée',
+      populationTotal: '290 Millions',
+      capitalSettlement: 'Port Fluvial de Sikun Prime',
+      primaryExports: ['Eau Pure Condensée', 'Navires-Citernes Orbitaux', 'Filtres de Précision']
+    },
+    loreSnippet: 'L\'eau est vie sur Arrakis, mais c\'est à Sikun qu\'elle s\'achète par milliards de tonnes.',
+    orbitingBodies: [
+      {
+        id: 'moon-sikun-1',
+        name: 'Station d\'Amarrage des Flottes Citernes',
+        type: 'heighliner_dock',
+        radius: 65,
+        size: 3.4,
+        speed: 0.007,
+        color: '#0ea5e9',
+        description: 'Port spatial d\'embarquement des réservoirs d\'eau vers les Heighliners.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-sikun-condensers',
+        name: 'Complexe des Condensateurs Géants',
+        type: 'industrial',
+        controllingHouse: 'guild',
+        coordinates: [-12.0, 72.0],
+        securityLevel: 'MAXIMAL',
+        description: 'Usine de captage atmosphérique extrayant des millions d\'hectolitres d\'eau distillée par heure.',
+        tacticalNotes: 'Sous protection contractuelle de la Guilde et de la CHOAM.',
+        threatLevel: 'Faible'
+      }
+    ]
   }
 ];
+

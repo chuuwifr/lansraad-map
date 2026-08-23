@@ -54,6 +54,58 @@ export interface TacticalPOI {
   wormSignActivity?: 'Nulle' | 'Basse' | 'Alerte Shai-Hulud' | 'Tracé Sismique Détecté';
 }
 
+export interface SystemMoon {
+  id: string;
+  name: string;
+  size: number;
+  orbitRadius: number; // distance from parent planet in system units
+  orbitSpeed: number;
+  color: string;
+  description: string;
+  radiusKm?: number;
+  orbitalPeriodDays?: number;
+  type?: 'natural' | 'heighliner_dock' | 'orbital_refinery' | 'space_station' | 'defense_fortress';
+}
+
+export interface SystemPlanet {
+  id: string;
+  name: string;
+  romanNumeral?: string; // e.g. "I", "II", "III", "IX"
+  orderIndex?: string;
+  classification: 'Tellurique' | 'Géante Gazeuse' | 'Monde Océanique' | 'Monde Désertique' | 'Monde Glaciaire' | 'Monde Volcanique' | 'Monde Minier' | 'Naine de Glace' | 'Monde Végétal' | 'Monde Synthétique' | 'Monde Industriel';
+  orbitRadius: number; // distance from central barycenter/sun in System View
+  orbitSpeed: number; // speed of orbit around sun
+  distanceAU?: number;
+  radiusKm?: number;
+  rotationSpeed?: number;
+  size: number;
+  color: string;
+  surfaceTextureType: SurfaceTextureType;
+  hasRings?: boolean;
+  ringColor?: string;
+  ringRadius?: number;
+  isPrimary?: boolean; // Main habitable world / capital of the system
+  atmosphereColor?: string;
+  cloudDensity?: number;
+  description: string;
+  moons: SystemMoon[];
+}
+
+export interface SystemStar {
+  id: string;
+  name: string;
+  spectralClass: string;
+  starType: string;
+  color: string;
+  radius: number;
+  luminosity: number;
+  mass?: number;
+  isPrimary?: boolean;
+  orbitRadius?: number; // For binary stars
+  orbitSpeed?: number;
+  description?: string;
+}
+
 export interface OrbitingBody {
   id: string;
   name: string;
@@ -112,6 +164,10 @@ export interface StarSystem {
     primaryExports: string[];
   };
   loreSnippet: string;
+  
+  // Full Astronomical System Specification (Suns, Planets, Moons)
+  systemStars?: SystemStar[];
+  systemPlanets?: SystemPlanet[];
   
   // Custom Uploaded Image
   customImageUrl?: string; // Custom uploaded surface or illustration image (data URL or web URL)

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ZoomLevel, StarSystem, MapVisualConfig, GalacticViewFilter } from '../../types/landsraad';
+import { ZoomLevel, StarSystem, MapVisualConfig, GalacticViewFilter, HouseInfo } from '../../types/landsraad';
 import { HOUSES_DATA } from '../../data/landsraadData';
 import { audioSynth } from '../../services/audioSynth';
+import { PlanetsByFactionDropdown } from './PlanetsByFactionDropdown';
 import { 
   Globe, 
   Orbit, 
@@ -26,6 +27,7 @@ interface TopNavigationBarProps {
   currentSystem: StarSystem;
   zoomLevel: ZoomLevel;
   config: MapVisualConfig;
+  houses?: Record<string, HouseInfo>;
   onZoomChange: (level: ZoomLevel) => void;
   onSelectSystem: (sys: StarSystem) => void;
   onUpdateConfig: (updater: (prev: MapVisualConfig) => MapVisualConfig) => void;
@@ -42,6 +44,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   currentSystem,
   zoomLevel,
   config,
+  houses = HOUSES_DATA,
   onZoomChange,
   onSelectSystem,
   onUpdateConfig,
@@ -58,7 +61,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  const house = HOUSES_DATA[currentSystem.controllingHouse] || HOUSES_DATA.corrino;
+  const house = houses[currentSystem.controllingHouse] || HOUSES_DATA.corrino;
 
   // Real-time stardate cycle increment
   useEffect(() => {
@@ -136,67 +139,80 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         </div>
       </div>
 
-      {/* Center: Search Bar & Quick Filters */}
-      <div className="flex-1 max-w-md mx-2 hidden md:block relative" ref={searchRef}>
-        <div className="relative flex items-center">
-          <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 pointer-events-none" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setIsSearchOpen(true);
-            }}
-            onFocus={() => setIsSearchOpen(true)}
-            placeholder="Rechercher un monde, une étoile, une Maison..."
-            className="w-full pl-8 pr-8 py-1.5 rounded-lg bg-[#0c1017] border border-neutral-700/80 focus:border-[#f59e0b] text-[#f3e8d2] font-mono text-xs placeholder:text-neutral-500 focus:outline-none transition-colors"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setIsSearchOpen(false);
+      {/* Center: Search Bar & Planets by Faction Dropdown */}
+      <div className="flex items-center gap-2 flex-1 max-w-xl mx-2">
+        {/* Dropdown with planets classified by faction */}
+        <PlanetsByFactionDropdown
+          systems={systems}
+          currentSystem={currentSystem}
+          houses={houses}
+          onSelectSystem={onSelectSystem}
+          onZoomChange={onZoomChange}
+          onOpenFiefsAtlas={onOpenFiefsAtlas}
+        />
+
+        {/* Global Search Input */}
+        <div className="flex-1 hidden md:block relative" ref={searchRef}>
+          <div className="relative flex items-center">
+            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setIsSearchOpen(true);
               }}
-              className="absolute right-2.5 text-neutral-400 hover:text-white text-xs"
-            >
-              ×
-            </button>
+              onFocus={() => setIsSearchOpen(true)}
+              placeholder="Rechercher un monde, une étoile, une Maison..."
+              className="w-full pl-8 pr-8 py-1.5 rounded-lg bg-[#0c1017] border border-neutral-700/80 focus:border-[#f59e0b] text-[#f3e8d2] font-mono text-xs placeholder:text-neutral-500 focus:outline-none transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setIsSearchOpen(false);
+                }}
+                className="absolute right-2.5 text-neutral-400 hover:text-white text-xs"
+              >
+                ×
+              </button>
+            )}
+          </div>
+
+          {/* Autocomplete Search Dropdown */}
+          {isSearchOpen && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#090c12] border border-[#f59e0b]/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto p-1.5 space-y-1 z-50 animate-fadeIn">
+              {searchResults.map((sys) => {
+                const h = houses[sys.controllingHouse] || HOUSES_DATA.corrino;
+                return (
+                  <button
+                    key={sys.id}
+                    onClick={() => {
+                      audioSynth.playHoloClick(1600);
+                      onSelectSystem(sys);
+                      setSearchQuery('');
+                      setIsSearchOpen(false);
+                    }}
+                    className="w-full p-2 rounded text-left hover:bg-neutral-800/80 transition-colors flex items-center justify-between group"
+                  >
+                    <div>
+                      <span className="font-bold text-xs text-neutral-200 group-hover:text-[#f59e0b] block">
+                        {sys.name}
+                      </span>
+                      <span className="text-[10px] text-neutral-400 font-mono">
+                        {sys.starType.split('(')[0]} • {h.name}
+                      </span>
+                    </div>
+                    <span 
+                      className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
+                      style={{ backgroundColor: h.color }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
-
-        {/* Autocomplete Search Dropdown */}
-        {isSearchOpen && searchResults.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#090c12] border border-[#f59e0b]/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto p-1.5 space-y-1 z-50 animate-fadeIn">
-            {searchResults.map((sys) => {
-              const h = HOUSES_DATA[sys.controllingHouse] || HOUSES_DATA.corrino;
-              return (
-                <button
-                  key={sys.id}
-                  onClick={() => {
-                    audioSynth.playHoloClick(1600);
-                    onSelectSystem(sys);
-                    setSearchQuery('');
-                    setIsSearchOpen(false);
-                  }}
-                  className="w-full p-2 rounded text-left hover:bg-neutral-800/80 transition-colors flex items-center justify-between group"
-                >
-                  <div>
-                    <span className="font-bold text-xs text-neutral-200 group-hover:text-[#f59e0b] block">
-                      {sys.name}
-                    </span>
-                    <span className="text-[10px] text-neutral-400 font-mono">
-                      {sys.starType.split('(')[0]} • {h.name}
-                    </span>
-                  </div>
-                  <span 
-                    className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
-                    style={{ backgroundColor: h.color }}
-                  />
-                </button>
-              );
-            })}
-          </div>
-        )}
       </div>
 
       {/* Zoom Level Stepper */}
