@@ -1,4 +1,4 @@
-export type ZoomLevel = 'galactic' | 'system' | 'planetary';
+export type ZoomLevel = 'deep_space' | 'galactic' | 'system' | 'planetary' | 'tactical';
 
 export type ThemePreset = 
   | 'imperial-gold' 

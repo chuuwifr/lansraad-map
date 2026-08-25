@@ -32,21 +32,35 @@ export const MobileTacticalBar: React.FC<MobileTacticalBarProps> = ({
 }) => {
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 px-2 py-2 bg-[#060709]/95 backdrop-blur-xl border-t border-[#f59e0b]/20 flex items-center justify-around shadow-2xl overflow-x-auto">
-      {/* 01: Galactic Zoom */}
+      {/* 01: Cosmos Zoom */}
       <button
         onClick={() => {
-          audioSynth.playHoloClick(1400);
+          audioSynth.playHoloClick(1200);
+          onZoomChange('deep_space');
+        }}
+        className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded transition-colors shrink-0 ${
+          zoomLevel === 'deep_space' ? 'text-[#f59e0b]' : 'text-neutral-400'
+        }`}
+      >
+        <Sparkles className="w-3.5 h-3.5" />
+        <span className="text-[8.5px] font-mono font-bold tracking-tighter">COSMOS</span>
+      </button>
+
+      {/* 02: Galactic Zoom */}
+      <button
+        onClick={() => {
+          audioSynth.playHoloClick(1300);
           onZoomChange('galactic');
         }}
         className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded transition-colors shrink-0 ${
           zoomLevel === 'galactic' ? 'text-[#f59e0b]' : 'text-neutral-400'
         }`}
       >
-        <Compass className="w-4 h-4" />
-        <span className="text-[9px] font-mono font-bold tracking-tighter">GALAXIE</span>
+        <Compass className="w-3.5 h-3.5" />
+        <span className="text-[8.5px] font-mono font-bold tracking-tighter">SECTEUR</span>
       </button>
 
-      {/* 02: System Zoom */}
+      {/* 03: System Zoom */}
       <button
         onClick={() => {
           audioSynth.playHoloClick(1400);
@@ -56,22 +70,36 @@ export const MobileTacticalBar: React.FC<MobileTacticalBarProps> = ({
           zoomLevel === 'system' ? 'text-[#f59e0b]' : 'text-neutral-400'
         }`}
       >
-        <Orbit className="w-4 h-4" />
-        <span className="text-[9px] font-mono font-bold tracking-tighter">SYSTÈME</span>
+        <Orbit className="w-3.5 h-3.5" />
+        <span className="text-[8.5px] font-mono font-bold tracking-tighter">SYSTÈME</span>
       </button>
 
-      {/* 03: Planetary Surface Zoom */}
+      {/* 04: Planetary Orbit Zoom */}
       <button
         onClick={() => {
-          audioSynth.playHoloClick(1400);
+          audioSynth.playHoloClick(1500);
           onZoomChange('planetary');
         }}
         className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded transition-colors shrink-0 ${
           zoomLevel === 'planetary' ? 'text-[#f59e0b]' : 'text-neutral-400'
         }`}
       >
-        <Globe className="w-4 h-4" />
-        <span className="text-[9px] font-mono font-bold tracking-tighter">SURFACE</span>
+        <Globe className="w-3.5 h-3.5" />
+        <span className="text-[8.5px] font-mono font-bold tracking-tighter">ORBITE</span>
+      </button>
+
+      {/* 05: Surface Tactical Zoom */}
+      <button
+        onClick={() => {
+          audioSynth.playHoloClick(1600);
+          onZoomChange('tactical');
+        }}
+        className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded transition-colors shrink-0 ${
+          zoomLevel === 'tactical' ? 'text-[#f59e0b]' : 'text-neutral-400'
+        }`}
+      >
+        <Globe className="w-3.5 h-3.5 text-[#fbbf24]" />
+        <span className="text-[8.5px] font-mono font-bold tracking-tighter">SURFACE</span>
       </button>
 
       <div className="w-[1px] h-6 bg-neutral-800 shrink-0 mx-0.5" />

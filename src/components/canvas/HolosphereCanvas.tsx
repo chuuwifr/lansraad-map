@@ -197,7 +197,7 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
     sceneRef.current = scene;
 
     // 2. Camera
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 4000);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 7500);
     camera.position.set(0, 240, 520);
     cameraRef.current = camera;
 
@@ -238,7 +238,7 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
     const deepCyan = new THREE.Color(0x06b6d4);
 
     for (let i = 0; i < particleCount; i++) {
-      const radius = 25 + Math.random() * 650;
+      const radius = 30 + Math.random() * 1250;
       const theta = Math.random() * Math.PI * 2;
       const phi = (Math.random() - 0.5) * Math.PI * 0.75;
 
@@ -290,10 +290,10 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
 
     // 6. Holographic Coordinate Grid Plane
     if (config.showCoordinatesGrid) {
-      const gridHelper = new THREE.GridHelper(800, 40, getThemeColor('primary'), 0x1e293b);
-      gridHelper.position.y = -70;
+      const gridHelper = new THREE.GridHelper(1600, 60, getThemeColor('primary'), 0x1e293b);
+      gridHelper.position.y = -85;
       (gridHelper.material as THREE.Material).transparent = true;
-      (gridHelper.material as THREE.Material).opacity = 0.25;
+      (gridHelper.material as THREE.Material).opacity = 0.22;
       scene.add(gridHelper);
     }
 
@@ -1078,7 +1078,7 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
     }
     planetaryGroup.add(poiGroup);
 
-    if (zoomLevel !== 'planetary') {
+    if (zoomLevel !== 'planetary' && zoomLevel !== 'tactical') {
       planetaryGroup.visible = false;
       return;
     }
@@ -1252,14 +1252,20 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
   useEffect(() => {
     audioSynth.playZoomTransition();
 
-    if (zoomLevel === 'galactic') {
+    if (zoomLevel === 'deep_space') {
+      targetCamPosRef.current.set(0, 480, 1180);
+      targetLookAtRef.current.set(0, 0, 0);
+    } else if (zoomLevel === 'galactic') {
       targetCamPosRef.current.set(0, 240, 520);
       targetLookAtRef.current.set(0, 0, 0);
     } else if (zoomLevel === 'system') {
       targetCamPosRef.current.set(0, 55, 175);
       targetLookAtRef.current.set(0, 0, 0);
     } else if (zoomLevel === 'planetary') {
-      targetCamPosRef.current.set(0, 22, 88);
+      targetCamPosRef.current.set(0, 24, 88);
+      targetLookAtRef.current.set(0, 0, 0);
+    } else if (zoomLevel === 'tactical') {
+      targetCamPosRef.current.set(0, 12, 50);
       targetLookAtRef.current.set(0, 0, 0);
     }
   }, [zoomLevel, selectedSystem]);
@@ -1289,8 +1295,8 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
         item.pulseMesh.position.copy(pos);
       });
 
-      // Animate all multi-body planetary systems in Galactic View
-      if (zoomLevel === 'galactic') {
+      // Animate all multi-body planetary systems in Galactic and Deep Space View
+      if (zoomLevel === 'deep_space' || zoomLevel === 'galactic') {
         galacticSystemsRef.current.forEach((sysObj) => {
           // Central Star Corona pulse and gentle rotation
           if (sysObj.starCorona) {
@@ -1358,8 +1364,8 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
         });
       }
 
-      // Rotate planet, clouds and shields at Planetary Level
-      if (planetMeshRef.current && zoomLevel === 'planetary') {
+      // Rotate planet, clouds and shields at Planetary & Tactical Level
+      if (planetMeshRef.current && (zoomLevel === 'planetary' || zoomLevel === 'tactical')) {
         const rotSpeed = (config.planetRotationSpeed ?? 1.0) * 0.0014;
         planetMeshRef.current.rotation.y += rotSpeed;
 
@@ -1489,29 +1495,50 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
           if (rootObj.userData.type === 'star') {
             const sys = rootObj.userData.system as StarSystem;
             onSelectSystem(sys);
-            if (zoomLevel === 'galactic') {
+            if (zoomLevel === 'deep_space') {
+              onZoomChange('galactic');
+            } else if (zoomLevel === 'galactic') {
               onZoomChange('system');
             } else if (zoomLevel === 'system') {
               onZoomChange('planetary');
+            } else if (zoomLevel === 'planetary') {
+              onZoomChange('tactical');
             }
           } else if (rootObj.userData.type === 'poi') {
             const poi = rootObj.userData.poi as TacticalPOI;
             onSelectPOI(poi);
+            if (zoomLevel !== 'tactical') {
+              onZoomChange('tactical');
+            }
           }
         }
       }
     }
   };
 
-  // Wheel Zoom
+  // Wheel Zoom with nuanced 5-tier stepping & debounce
+  const lastWheelTimeRef = useRef(0);
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
+    const now = Date.now();
+    if (now - lastWheelTimeRef.current < 200) return;
+    lastWheelTimeRef.current = now;
+
+    const ZOOM_TIERS: ZoomLevel[] = ['deep_space', 'galactic', 'system', 'planetary', 'tactical'];
+    const currentIndex = ZOOM_TIERS.indexOf(zoomLevel);
+
     if (e.deltaY > 0) {
-      if (zoomLevel === 'planetary') onZoomChange('system');
-      else if (zoomLevel === 'system') onZoomChange('galactic');
-    } else {
-      if (zoomLevel === 'galactic') onZoomChange('system');
-      else if (zoomLevel === 'system') onZoomChange('planetary');
+      // Zoom out (towards wider deep space view)
+      if (currentIndex > 0) {
+        audioSynth.playHoloClick(1100 + currentIndex * 100);
+        onZoomChange(ZOOM_TIERS[currentIndex - 1]);
+      }
+    } else if (e.deltaY < 0) {
+      // Zoom in (towards surface tactical view)
+      if (currentIndex < ZOOM_TIERS.length - 1) {
+        audioSynth.playHoloClick(1300 + (currentIndex + 1) * 100);
+        onZoomChange(ZOOM_TIERS[currentIndex + 1]);
+      }
     }
   };
 
@@ -1524,13 +1551,16 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
 
       if (pinchDistRef.current !== null) {
         const diff = dist - pinchDistRef.current;
-        if (diff > 45) {
-          if (zoomLevel === 'galactic') onZoomChange('system');
-          else if (zoomLevel === 'system') onZoomChange('planetary');
+        const ZOOM_TIERS: ZoomLevel[] = ['deep_space', 'galactic', 'system', 'planetary', 'tactical'];
+        const currentIndex = ZOOM_TIERS.indexOf(zoomLevel);
+
+        if (diff > 45 && currentIndex < ZOOM_TIERS.length - 1) {
+          audioSynth.playHoloClick(1500);
+          onZoomChange(ZOOM_TIERS[currentIndex + 1]);
           pinchDistRef.current = dist;
-        } else if (diff < -45) {
-          if (zoomLevel === 'planetary') onZoomChange('system');
-          else if (zoomLevel === 'system') onZoomChange('galactic');
+        } else if (diff < -45 && currentIndex > 0) {
+          audioSynth.playHoloClick(1200);
+          onZoomChange(ZOOM_TIERS[currentIndex - 1]);
           pinchDistRef.current = dist;
         }
       } else {

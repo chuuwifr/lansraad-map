@@ -8,9 +8,11 @@ import {
   Minus, 
   RotateCcw, 
   ZoomIn, 
-  Compass
+  Compass,
+  Layers
 } from 'lucide-react';
 import { ZoomLevel } from '../../types/landsraad';
+import { audioSynth } from '../../services/audioSynth';
 
 interface TacticalNavControlsProps {
   zoomLevel: ZoomLevel;
@@ -21,6 +23,14 @@ interface TacticalNavControlsProps {
   onSetZoomLevel?: (level: ZoomLevel) => void;
 }
 
+const ZOOM_TIERS: { id: ZoomLevel; label: string; shortLabel: string; scale: string; pct: string }[] = [
+  { id: 'deep_space', label: 'Cosmos (Grand Angle)', shortLabel: 'Cosmos', scale: '1:1500 AL', pct: '20%' },
+  { id: 'galactic', label: 'Secteur Galactique', shortLabel: 'Secteur', scale: '1:600 AL', pct: '50%' },
+  { id: 'system', label: 'Système Solaire', shortLabel: 'Système', scale: '1:40 UA', pct: '100%' },
+  { id: 'planetary', label: 'Orbite Planétaire', shortLabel: 'Orbite', scale: '1:100k KM', pct: '220%' },
+  { id: 'tactical', label: 'Surface & Tactique', shortLabel: 'Surface', scale: '1:2k KM', pct: '450%' },
+];
+
 export const TacticalNavControls: React.FC<TacticalNavControlsProps> = ({
   zoomLevel,
   onZoomIn,
@@ -30,6 +40,10 @@ export const TacticalNavControls: React.FC<TacticalNavControlsProps> = ({
   onSetZoomLevel
 }) => {
   const continuousRotateInterval = useRef<number | null>(null);
+
+  const currentTierIndex = ZOOM_TIERS.findIndex(t => t.id === zoomLevel);
+  const safeIndex = currentTierIndex >= 0 ? currentTierIndex : 1;
+  const currentTier = ZOOM_TIERS[safeIndex];
 
   const startContinuousRotation = (deltaTheta: number, deltaPhi: number) => {
     onRotate(deltaTheta, deltaPhi);
@@ -56,8 +70,17 @@ export const TacticalNavControls: React.FC<TacticalNavControlsProps> = ({
     };
   }, []);
 
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value, 10);
+    const targetTier = ZOOM_TIERS[val];
+    if (targetTier && onSetZoomLevel) {
+      audioSynth.playHoloClick(1200 + val * 120);
+      onSetZoomLevel(targetTier.id);
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center gap-3 p-3 rounded-2xl bg-[#06080d]/90 backdrop-blur-md border border-[#f59e0b]/30 shadow-[0_8px_32px_rgba(0,0,0,0.6)] select-none text-[#e2d9c8]">
+    <div className="flex flex-col items-center gap-3 p-3 rounded-2xl bg-[#06080d]/92 backdrop-blur-md border border-[#f59e0b]/35 shadow-[0_8px_32px_rgba(0,0,0,0.7)] select-none text-[#e2d9c8] w-[184px]">
       
       {/* Title / Compass Header */}
       <div className="flex items-center justify-between w-full px-1 border-b border-neutral-800/80 pb-2">
@@ -66,7 +89,10 @@ export const TacticalNavControls: React.FC<TacticalNavControlsProps> = ({
           <span>Navigation</span>
         </div>
         <button
-          onClick={onResetOrientation}
+          onClick={() => {
+            audioSynth.playHoloClick(1600);
+            onResetOrientation();
+          }}
           title="Réinitialiser l'orientation"
           className="p-1 rounded text-neutral-400 hover:text-[#f59e0b] hover:bg-[#f59e0b]/10 transition-colors"
         >
@@ -138,7 +164,10 @@ export const TacticalNavControls: React.FC<TacticalNavControlsProps> = ({
 
         {/* Center Reset Button */}
         <button
-          onClick={onResetOrientation}
+          onClick={() => {
+            audioSynth.playHoloClick(1600);
+            onResetOrientation();
+          }}
           title="Recentrer la caméra"
           className="w-7 h-7 rounded-full bg-[#1e2536] hover:bg-[#f59e0b] text-[#f59e0b] hover:text-black flex items-center justify-center font-mono text-[10px] font-bold transition-colors z-10 border border-[#f59e0b]/40 shadow-inner"
         >
@@ -146,76 +175,164 @@ export const TacticalNavControls: React.FC<TacticalNavControlsProps> = ({
         </button>
       </div>
 
-      {/* 2. Boutons de Zoom (+ / -) */}
-      <div className="w-full flex flex-col gap-1.5 pt-2 border-t border-neutral-800/80">
-        <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400 px-1">
-          <span className="flex items-center gap-1 uppercase">
-            <ZoomIn className="w-3 h-3 text-[#f59e0b]" /> Zoom
-          </span>
-          <span className="text-[#f59e0b] font-bold uppercase tracking-wider">
-            {zoomLevel === 'galactic' ? 'Galaxie' : zoomLevel === 'system' ? 'Système' : 'Planète'}
-          </span>
+      {/* 2. Contrôle de Zoom Nuancé & Curseur Holographique */}
+      <div className="w-full flex flex-col gap-2 pt-2 border-t border-neutral-800/80">
+        
+        {/* Telemetry Header */}
+        <div className="flex flex-col gap-0.5 px-0.5">
+          <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400">
+            <span className="flex items-center gap-1 uppercase">
+              <ZoomIn className="w-3 h-3 text-[#f59e0b]" /> Zoom
+            </span>
+            <span className="text-[#f59e0b] font-bold uppercase tracking-wider text-[11px]">
+              {currentTier.shortLabel}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-[9px] font-mono text-neutral-500">
+            <span>{currentTier.scale}</span>
+            <span className="text-[#fbbf24] font-semibold">{currentTier.pct}</span>
+          </div>
         </div>
 
+        {/* Tactile Nuanced Zoom Range Slider */}
+        <div className="px-1 py-1">
+          <input
+            type="range"
+            min={0}
+            max={ZOOM_TIERS.length - 1}
+            step={1}
+            value={safeIndex}
+            onChange={handleSliderChange}
+            className="w-full h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#f59e0b] focus:outline-none"
+            aria-label="Ajuster le niveau de zoom"
+          />
+          {/* Tick Markers */}
+          <div className="flex justify-between items-center px-0.5 pt-1 text-[8px] font-mono text-neutral-500">
+            <span>🌌</span>
+            <span>🪐</span>
+            <span>☀️</span>
+            <span>🌍</span>
+            <span>🎯</span>
+          </div>
+        </div>
+
+        {/* Stepper Buttons (+ / -) */}
         <div className="flex items-center gap-1.5 w-full">
-          {/* Zoom In (+) */}
+          {/* Zoom Out (-) towards Cosmos */}
           <button
-            onClick={onZoomIn}
-            disabled={zoomLevel === 'planetary'}
-            title="Zoomer (+)"
-            aria-label="Zoomer"
-            className="flex-1 py-1.5 px-2 flex items-center justify-center gap-1 rounded-lg bg-[#121620] hover:bg-[#f59e0b] text-neutral-200 hover:text-black font-mono font-bold text-sm border border-[#f59e0b]/30 transition-all disabled:opacity-35 disabled:hover:bg-[#121620] disabled:hover:text-neutral-200 disabled:cursor-not-allowed shadow-md active:scale-95"
+            onClick={() => {
+              audioSynth.playHoloClick(1200);
+              onZoomOut();
+            }}
+            disabled={safeIndex === 0}
+            title="Dézoomer vers le Cosmos (-)"
+            aria-label="Dézoomer"
+            className="flex-1 py-1.5 px-2 flex items-center justify-center gap-1 rounded-lg bg-[#121620] hover:bg-[#f59e0b] text-neutral-200 hover:text-black font-mono font-bold text-xs border border-[#f59e0b]/30 transition-all disabled:opacity-30 disabled:hover:bg-[#121620] disabled:hover:text-neutral-200 disabled:cursor-not-allowed shadow-md active:scale-95"
           >
-            <Plus className="w-4 h-4" />
+            <Minus className="w-3.5 h-3.5" />
+            <span className="text-[9px]">LARGE</span>
           </button>
 
-          {/* Zoom Out (-) */}
+          {/* Zoom In (+) towards Surface */}
           <button
-            onClick={onZoomOut}
-            disabled={zoomLevel === 'galactic'}
-            title="Dézoomer (-)"
-            aria-label="Dézoomer"
-            className="flex-1 py-1.5 px-2 flex items-center justify-center gap-1 rounded-lg bg-[#121620] hover:bg-[#f59e0b] text-neutral-200 hover:text-black font-mono font-bold text-sm border border-[#f59e0b]/30 transition-all disabled:opacity-35 disabled:hover:bg-[#121620] disabled:hover:text-neutral-200 disabled:cursor-not-allowed shadow-md active:scale-95"
+            onClick={() => {
+              audioSynth.playHoloClick(1400);
+              onZoomIn();
+            }}
+            disabled={safeIndex === ZOOM_TIERS.length - 1}
+            title="Zoomer vers la Surface (+)"
+            aria-label="Zoomer"
+            className="flex-1 py-1.5 px-2 flex items-center justify-center gap-1 rounded-lg bg-[#121620] hover:bg-[#f59e0b] text-neutral-200 hover:text-black font-mono font-bold text-xs border border-[#f59e0b]/30 transition-all disabled:opacity-30 disabled:hover:bg-[#121620] disabled:hover:text-neutral-200 disabled:cursor-not-allowed shadow-md active:scale-95"
           >
-            <Minus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
+            <span className="text-[9px]">PRÈS</span>
           </button>
         </div>
 
-        {/* 3. Paliers de zoom rapides */}
+        {/* 3. 5 Paliers de Zoom Tactiques Rapides */}
         {onSetZoomLevel && (
-          <div className="grid grid-cols-3 gap-1 pt-1">
-            <button
-              onClick={() => onSetZoomLevel('galactic')}
-              className={`py-1 rounded text-[9px] font-mono uppercase font-semibold transition-colors ${
-                zoomLevel === 'galactic'
-                  ? 'bg-[#f59e0b] text-black'
-                  : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
-              }`}
-            >
-              Gal
-            </button>
-            <button
-              onClick={() => onSetZoomLevel('system')}
-              className={`py-1 rounded text-[9px] font-mono uppercase font-semibold transition-colors ${
-                zoomLevel === 'system'
-                  ? 'bg-[#f59e0b] text-black'
-                  : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
-              }`}
-            >
-              Sys
-            </button>
-            <button
-              onClick={() => onSetZoomLevel('planetary')}
-              className={`py-1 rounded text-[9px] font-mono uppercase font-semibold transition-colors ${
-                zoomLevel === 'planetary'
-                  ? 'bg-[#f59e0b] text-black'
-                  : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
-              }`}
-            >
-              Plan
-            </button>
+          <div className="flex flex-col gap-1 pt-1 border-t border-neutral-800/60">
+            <div className="grid grid-cols-2 gap-1">
+              <button
+                onClick={() => {
+                  audioSynth.playHoloClick(1100);
+                  onSetZoomLevel('deep_space');
+                }}
+                className={`py-1 px-1 rounded text-[8.5px] font-mono uppercase font-bold transition-all ${
+                  zoomLevel === 'deep_space'
+                    ? 'bg-[#f59e0b] text-black shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
+                }`}
+                title="Vue panoramique complète de l'Univers Connu"
+              >
+                1. Cosmos
+              </button>
+
+              <button
+                onClick={() => {
+                  audioSynth.playHoloClick(1200);
+                  onSetZoomLevel('galactic');
+                }}
+                className={`py-1 px-1 rounded text-[8.5px] font-mono uppercase font-bold transition-all ${
+                  zoomLevel === 'galactic'
+                    ? 'bg-[#f59e0b] text-black shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
+                }`}
+                title="Vue des corridors et fiefs du Landsraad"
+              >
+                2. Secteur
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-1">
+              <button
+                onClick={() => {
+                  audioSynth.playHoloClick(1300);
+                  onSetZoomLevel('system');
+                }}
+                className={`py-1 px-0.5 rounded text-[8px] font-mono uppercase font-bold transition-all ${
+                  zoomLevel === 'system'
+                    ? 'bg-[#f59e0b] text-black shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
+                }`}
+                title="Vue du système solaire et des orbites"
+              >
+                Système
+              </button>
+
+              <button
+                onClick={() => {
+                  audioSynth.playHoloClick(1400);
+                  onSetZoomLevel('planetary');
+                }}
+                className={`py-1 px-0.5 rounded text-[8px] font-mono uppercase font-bold transition-all ${
+                  zoomLevel === 'planetary'
+                    ? 'bg-[#f59e0b] text-black shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
+                }`}
+                title="Orbite et atmosphère du monde"
+              >
+                Orbite
+              </button>
+
+              <button
+                onClick={() => {
+                  audioSynth.playHoloClick(1500);
+                  onSetZoomLevel('tactical');
+                }}
+                className={`py-1 px-0.5 rounded text-[8px] font-mono uppercase font-bold transition-all ${
+                  zoomLevel === 'tactical'
+                    ? 'bg-[#f59e0b] text-black shadow-[0_0_8px_rgba(245,158,11,0.4)]'
+                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-white/5 border border-neutral-800'
+                }`}
+                title="Close-up tactique de la surface et des POIs"
+              >
+                Surface
+              </button>
+            </div>
           </div>
         )}
+
       </div>
 
     </div>

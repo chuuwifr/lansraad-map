@@ -211,20 +211,24 @@ export default function App() {
     setEditingSystem(null);
   }, []);
 
-  // Manual Zoom In & Out handlers (+ / -)
+  // Manual Zoom In & Out handlers (+ / -) with 5 nuanced tiers
   const handleZoomIn = useCallback(() => {
     setZoomLevel(current => {
+      if (current === 'deep_space') return 'galactic';
       if (current === 'galactic') return 'system';
       if (current === 'system') return 'planetary';
-      return 'planetary';
+      if (current === 'planetary') return 'tactical';
+      return 'tactical';
     });
   }, []);
 
   const handleZoomOut = useCallback(() => {
     setZoomLevel(current => {
+      if (current === 'tactical') return 'planetary';
       if (current === 'planetary') return 'system';
       if (current === 'system') return 'galactic';
-      return 'galactic';
+      if (current === 'galactic') return 'deep_space';
+      return 'deep_space';
     });
   }, []);
 
@@ -317,7 +321,7 @@ export default function App() {
         <div className="md:hidden absolute top-4 right-3 z-20 flex flex-col gap-1.5 p-1.5 rounded-xl bg-[#06080d]/90 backdrop-blur-md border border-[#f59e0b]/30 shadow-lg">
           <button
             onClick={handleZoomIn}
-            disabled={zoomLevel === 'planetary'}
+            disabled={zoomLevel === 'tactical'}
             title="Zoomer (+)"
             className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#121620] active:bg-[#f59e0b] text-[#f59e0b] active:text-black border border-[#f59e0b]/30 disabled:opacity-30 disabled:pointer-events-none font-bold text-lg"
           >
@@ -325,7 +329,7 @@ export default function App() {
           </button>
           <button
             onClick={handleZoomOut}
-            disabled={zoomLevel === 'galactic'}
+            disabled={zoomLevel === 'deep_space'}
             title="Dézoomer (-)"
             className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#121620] active:bg-[#f59e0b] text-[#f59e0b] active:text-black border border-[#f59e0b]/30 disabled:opacity-30 disabled:pointer-events-none font-bold text-lg"
           >

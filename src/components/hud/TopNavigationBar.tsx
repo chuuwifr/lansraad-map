@@ -223,45 +223,83 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         </div>
       </div>
 
-      {/* Zoom Level Stepper */}
-      <nav className="hidden lg:flex items-center bg-[#0d1117]/90 p-1 rounded-lg border border-[#f59e0b]/20 shadow-inner shrink-0">
+      {/* Zoom Level Stepper with 5 Granular Tiers */}
+      <nav className="hidden xl:flex items-center bg-[#0d1117]/90 p-1 rounded-lg border border-[#f59e0b]/25 shadow-inner shrink-0 gap-0.5">
+        {/* Tier 1: Cosmos */}
+        <button
+          onClick={() => handleZoomClick('deep_space')}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
+            zoomLevel === 'deep_space'
+              ? 'bg-[#f59e0b] text-[#060709] font-bold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
+              : 'text-[#d6c7b2] hover:text-[#fbbf24] hover:bg-white/5'
+          }`}
+          title="Vue Grand Angle & Espace Profond (Cosmos)"
+        >
+          <Sparkles className="w-3 h-3" />
+          <span>COSMOS</span>
+        </button>
+
+        <div className="w-[1px] h-3 bg-[#f59e0b]/20" />
+
+        {/* Tier 2: Galactic Sector */}
         <button
           onClick={() => handleZoomClick('galactic')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
             zoomLevel === 'galactic'
               ? 'bg-[#f59e0b] text-[#060709] font-bold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
               : 'text-[#d6c7b2] hover:text-[#fbbf24] hover:bg-white/5'
           }`}
+          title="Vue Secteur Galactique & Fiefs"
         >
-          <Compass className="w-3.5 h-3.5" />
-          <span>GALAXIE</span>
+          <Compass className="w-3 h-3" />
+          <span>SECTEUR</span>
         </button>
 
-        <div className="w-[1px] h-4 bg-[#f59e0b]/20 mx-1" />
+        <div className="w-[1px] h-3 bg-[#f59e0b]/20" />
 
+        {/* Tier 3: Star System */}
         <button
           onClick={() => handleZoomClick('system')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
             zoomLevel === 'system'
               ? 'bg-[#f59e0b] text-[#060709] font-bold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
               : 'text-[#d6c7b2] hover:text-[#fbbf24] hover:bg-white/5'
           }`}
+          title="Vue Système Solaire & Orbites"
         >
-          <Orbit className="w-3.5 h-3.5" />
+          <Orbit className="w-3 h-3" />
           <span>SYSTÈME</span>
         </button>
 
-        <div className="w-[1px] h-4 bg-[#f59e0b]/20 mx-1" />
+        <div className="w-[1px] h-3 bg-[#f59e0b]/20" />
 
+        {/* Tier 4: Planetary Orbit */}
         <button
           onClick={() => handleZoomClick('planetary')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
             zoomLevel === 'planetary'
               ? 'bg-[#f59e0b] text-[#060709] font-bold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
               : 'text-[#d6c7b2] hover:text-[#fbbf24] hover:bg-white/5'
           }`}
+          title="Vue Orbite Planétaire & Atmosphère"
         >
-          <Globe className="w-3.5 h-3.5" />
+          <Globe className="w-3 h-3" />
+          <span>ORBITE</span>
+        </button>
+
+        <div className="w-[1px] h-3 bg-[#f59e0b]/20" />
+
+        {/* Tier 5: Tactical Surface */}
+        <button
+          onClick={() => handleZoomClick('tactical')}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-mono tracking-wider transition-all duration-200 ${
+            zoomLevel === 'tactical'
+              ? 'bg-[#f59e0b] text-[#060709] font-bold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
+              : 'text-[#d6c7b2] hover:text-[#fbbf24] hover:bg-white/5'
+          }`}
+          title="Vue Tactique & Surface Haute Résolution"
+        >
+          <Layers className="w-3 h-3" />
           <span>SURFACE</span>
         </button>
       </nav>
