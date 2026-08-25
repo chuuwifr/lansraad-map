@@ -17,21 +17,45 @@ import { SectorDetailsPanel } from './components/hud/SectorDetailsPanel';
 import { AstrogationMeasureTool } from './components/hud/AstrogationMeasureTool';
 import { FiefdomsAtlasModal } from './components/hud/FiefdomsAtlasModal';
 import { ResourceAtlasModal } from './components/hud/ResourceAtlasModal';
+import { AllPlanetsDirectoryModal } from './components/hud/AllPlanetsDirectoryModal';
 import { DisplaySettingsModal } from './components/hud/DisplaySettingsModal';
 import { PlanetCreatorModal } from './components/hud/PlanetCreatorModal';
+import { BackupRestoreModal } from './components/hud/BackupRestoreModal';
+import { TimelineModal } from './components/hud/TimelineModal';
 import { MobileTacticalBar } from './components/hud/MobileTacticalBar';
 import { PlanetHoverBanner } from './components/hud/PlanetHoverBanner';
 import { TacticalNavControls } from './components/hud/TacticalNavControls';
-import { Layers, Compass, Navigation, Info, Shield, Sparkles } from 'lucide-react';
+import { storageService } from './services/storageService';
+import { Layers, Compass, Navigation, Info, Shield, Sparkles, Database, Clock } from 'lucide-react';
 
 export default function App() {
   const holosphereCanvasRef = useRef<HolosphereCanvasRef>(null);
 
-  // Main Systems & Houses State
-  const [systems, setSystems] = useState<StarSystem[]>(STAR_SYSTEMS_DATA);
-  const [houses, setHouses] = useState<Record<string, HouseInfo>>(HOUSES_DATA);
-  const [selectedSystem, setSelectedSystem] = useState<StarSystem>(STAR_SYSTEMS_DATA[0]); // Default Canopus // Arrakis
-  const [selectedPOI, setSelectedPOI] = useState<TacticalPOI | null>(STAR_SYSTEMS_DATA[0].tacticalPOIs[0]);
+  // Main Systems & Houses State (with optional autosave restore initialization)
+  const [systems, setSystems] = useState<StarSystem[]>(() => {
+    const saved = storageService.loadAutosave();
+    return saved?.systems || STAR_SYSTEMS_DATA;
+  });
+  const [houses, setHouses] = useState<Record<string, HouseInfo>>(() => {
+    const saved = storageService.loadAutosave();
+    return saved?.houses || HOUSES_DATA;
+  });
+  const [selectedSystem, setSelectedSystem] = useState<StarSystem>(() => {
+    const saved = storageService.loadAutosave();
+    if (saved?.selectedSystemId && saved?.systems) {
+      const found = saved.systems.find(s => s.id === saved.selectedSystemId);
+      if (found) return found;
+    }
+    return STAR_SYSTEMS_DATA[0];
+  });
+  const [selectedPOI, setSelectedPOI] = useState<TacticalPOI | null>(() => {
+    const saved = storageService.loadAutosave();
+    if (saved?.selectedSystemId && saved?.systems) {
+      const found = saved.systems.find(s => s.id === saved.selectedSystemId);
+      if (found?.tacticalPOIs?.[0]) return found.tacticalPOIs[0];
+    }
+    return STAR_SYSTEMS_DATA[0].tacticalPOIs[0];
+  });
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('galactic');
 
   // Hover state for interactive tactical HUD banner
@@ -42,43 +66,83 @@ export default function App() {
   const [astrogationSourceSystem, setAstrogationSourceSystem] = useState<StarSystem>(STAR_SYSTEMS_DATA[0]);
   const [astrogationTargetSystem, setAstrogationTargetSystem] = useState<StarSystem | null>(STAR_SYSTEMS_DATA[1]);
 
-  // Atlas & Creator Modals
+  // Atlas, Backup, Timeline & Creator Modals
+  const [isPlanetsDirectoryOpen, setIsPlanetsDirectoryOpen] = useState(false);
   const [isFiefsAtlasOpen, setIsFiefsAtlasOpen] = useState(false);
   const [isResourceAtlasOpen, setIsResourceAtlasOpen] = useState(false);
+  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isPlanetCreatorOpen, setIsPlanetCreatorOpen] = useState(false);
+  const [isBackupRestoreOpen, setIsBackupRestoreOpen] = useState(false);
   const [editingSystem, setEditingSystem] = useState<StarSystem | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDossierOpen, setIsDossierOpen] = useState(true);
 
   // Visual Configuration (Completely silent by default, sounds disabled)
-  const [config, setConfig] = useState<MapVisualConfig>({
-    theme: 'imperial-gold',
-    activeFilter: 'all',
-    scanlinesIntensity: 0.12,
-    particleDensity: 2400,
-    bloomIntensity: 1.25,
-    parallaxDepth: 0.85,
-    lowLightMode: false,
-    highContrast: false,
-    showConstellations: true,
-    showGuildRoutes: true,
-    showFiefdomSpheres: false,
-    showStarLabels: true,
-    showCoordinatesGrid: true,
-    showShieldMeshes: true,
-    audioEnabled: false, // Sounds completely removed/disabled
-    audioVolume: 0.0,
-    gyroscopeParallax: true,
-    realisticShading: true,
-    cloudAnimation: true,
-    cloudSpeed: 1.0,
-    atmosphereGlowIntensity: 1.1,
-    nightLightsEnabled: true,
-    sunIntensity: 3.2,
-    surfaceBumpStrength: 1.2,
-    oceanSpecularStrength: 1.0,
-    planetRotationSpeed: 1.0
+  const [config, setConfig] = useState<MapVisualConfig>(() => {
+    const saved = storageService.loadAutosave();
+    const baseConfig: MapVisualConfig = {
+      theme: 'imperial-gold',
+      activeFilter: 'all',
+      scanlinesIntensity: 0.12,
+      particleDensity: 2400,
+      bloomIntensity: 1.25,
+      parallaxDepth: 0.85,
+      lowLightMode: false,
+      highContrast: false,
+      showConstellations: true,
+      showGuildRoutes: true,
+      showFiefdomSpheres: false,
+      showStarLabels: true,
+      showCoordinatesGrid: true,
+      showShieldMeshes: true,
+      audioEnabled: false, // Sounds completely removed/disabled
+      audioVolume: 0.0,
+      gyroscopeParallax: true,
+      realisticShading: true,
+      cloudAnimation: true,
+      cloudSpeed: 1.0,
+      atmosphereGlowIntensity: 1.1,
+      nightLightsEnabled: true,
+      sunIntensity: 3.2,
+      surfaceBumpStrength: 1.2,
+      oceanSpecularStrength: 1.0,
+      planetRotationSpeed: 1.0
+    };
+    if (saved?.config) {
+      return { ...baseConfig, ...saved.config };
+    }
+    return baseConfig;
   });
+
+  // Automatically save state changes to local storage autosave
+  React.useEffect(() => {
+    storageService.saveAutosave(systems, houses, selectedSystem.id, config);
+  }, [systems, houses, selectedSystem.id, config]);
+
+  // Restore State Handler (from JSON import, Slot or Reset)
+  const handleRestoreState = useCallback((restoredData: {
+    systems: StarSystem[];
+    houses: Record<string, HouseInfo>;
+    selectedSystemId?: string;
+    config?: Partial<MapVisualConfig>;
+  }) => {
+    setSystems(restoredData.systems);
+    setHouses(restoredData.houses);
+    if (restoredData.selectedSystemId) {
+      const found = restoredData.systems.find(s => s.id === restoredData.selectedSystemId) || restoredData.systems[0];
+      if (found) {
+        setSelectedSystem(found);
+        setSelectedPOI(found.tacticalPOIs?.[0] || null);
+      }
+    } else if (restoredData.systems.length > 0) {
+      setSelectedSystem(restoredData.systems[0]);
+      setSelectedPOI(restoredData.systems[0].tacticalPOIs?.[0] || null);
+    }
+
+    if (restoredData.config) {
+      setConfig(prev => ({ ...prev, ...restoredData.config }));
+    }
+  }, []);
 
   // Handle System Selection
   const handleSelectSystem = useCallback((sys: StarSystem) => {
@@ -199,13 +263,16 @@ export default function App() {
         onZoomChange={setZoomLevel}
         onSelectSystem={handleSelectSystem}
         onUpdateConfig={setConfig}
+        onOpenPlanetsDirectory={() => setIsPlanetsDirectoryOpen(true)}
         onOpenAstrogation={() => setIsAstrogationOpen(true)}
         onOpenFiefsAtlas={() => setIsFiefsAtlasOpen(true)}
         onOpenResourceAtlas={() => setIsResourceAtlasOpen(true)}
+        onOpenTimeline={() => setIsTimelineOpen(true)}
         onOpenCreatePlanet={() => {
           setEditingSystem(null);
           setIsPlanetCreatorOpen(true);
         }}
+        onOpenBackupRestore={() => setIsBackupRestoreOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onResetView={handleResetView}
       />
@@ -292,6 +359,7 @@ export default function App() {
                   onSelectPOI={handleSelectPOI}
                   onZoomToSurface={() => setZoomLevel('planetary')}
                   onOpenAstrogation={handleOpenAstrogationFromSystem}
+                  onOpenTimeline={() => setIsTimelineOpen(true)}
                   onUpdateSystem={handleUpdateSystem}
                   onEditSystem={(sys) => {
                     setEditingSystem(sys);
@@ -407,6 +475,7 @@ export default function App() {
                 onSelectPOI={handleSelectPOI}
                 onZoomToSurface={() => setZoomLevel('planetary')}
                 onOpenAstrogation={handleOpenAstrogationFromSystem}
+                onOpenTimeline={() => setIsTimelineOpen(true)}
                 onUpdateSystem={handleUpdateSystem}
                 onEditSystem={(sys) => {
                   setEditingSystem(sys);
@@ -425,16 +494,32 @@ export default function App() {
         currentSystem={selectedSystem}
         onZoomChange={setZoomLevel}
         onToggleDossier={() => setIsDossierOpen(prev => !prev)}
+        onOpenPlanetsDirectory={() => setIsPlanetsDirectoryOpen(true)}
         onOpenAstrogation={() => setIsAstrogationOpen(true)}
         onOpenFiefsAtlas={() => setIsFiefsAtlasOpen(true)}
         onOpenResourceAtlas={() => setIsResourceAtlasOpen(true)}
+        onOpenTimeline={() => setIsTimelineOpen(true)}
         onOpenCreatePlanet={() => {
           setEditingSystem(null);
           setIsPlanetCreatorOpen(true);
         }}
+        onOpenBackupRestore={() => setIsBackupRestoreOpen(true)}
       />
 
-      {/* 4. Astrogation & Fold Distance Tool Modal */}
+      {/* 4. Complete Planet & Systems Directory Modal */}
+      {isPlanetsDirectoryOpen && (
+        <AllPlanetsDirectoryModal
+          systems={systems}
+          currentSystem={selectedSystem}
+          houses={houses}
+          onSelectSystem={handleSelectSystem}
+          onZoomChange={setZoomLevel}
+          onOpenAstrogationFromSystem={handleOpenAstrogationFromSystem}
+          onClose={() => setIsPlanetsDirectoryOpen(false)}
+        />
+      )}
+
+      {/* 5. Astrogation & Fold Distance Tool Modal */}
       {isAstrogationOpen && (
         <AstrogationMeasureTool
           systems={systems}
@@ -467,7 +552,20 @@ export default function App() {
         />
       )}
 
-      {/* 7. Planet Creator / Custom World Foundry Modal */}
+      {/* 7. Dune Historical Timeline Modal (Expanded Dune Chronology) */}
+      {isTimelineOpen && (
+        <TimelineModal
+          onSelectSystem={(sysId) => {
+            const found = systems.find(s => s.id === sysId);
+            if (found) {
+              handleSelectSystem(found);
+            }
+          }}
+          onClose={() => setIsTimelineOpen(false)}
+        />
+      )}
+
+      {/* 8. Planet Creator / Custom World Foundry Modal */}
       {isPlanetCreatorOpen && (
         <PlanetCreatorModal
           initialSystem={editingSystem}
@@ -480,12 +578,28 @@ export default function App() {
         />
       )}
 
-      {/* 8. Visual & Theme Settings Modal */}
+      {/* 9. Visual & Theme Settings Modal */}
       {isSettingsOpen && (
         <DisplaySettingsModal
           config={config}
           onUpdateConfig={setConfig}
+          onOpenBackupRestore={() => {
+            setIsSettingsOpen(false);
+            setIsBackupRestoreOpen(true);
+          }}
           onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
+
+      {/* 10. Holonet Archives, Backup & Restore Modal */}
+      {isBackupRestoreOpen && (
+        <BackupRestoreModal
+          systems={systems}
+          houses={houses}
+          selectedSystemId={selectedSystem.id}
+          config={config}
+          onRestoreState={handleRestoreState}
+          onClose={() => setIsBackupRestoreOpen(false)}
         />
       )}
     </div>

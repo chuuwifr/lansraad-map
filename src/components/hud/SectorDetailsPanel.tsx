@@ -26,7 +26,8 @@ import {
   UploadCloud,
   Image as ImageIcon,
   Trash2,
-  Sun
+  Sun,
+  Clock
 } from 'lucide-react';
 
 interface SectorDetailsPanelProps {
@@ -37,6 +38,7 @@ interface SectorDetailsPanelProps {
   onSelectPOI: (poi: TacticalPOI | null) => void;
   onZoomToSurface: () => void;
   onOpenAstrogation?: (sys: StarSystem) => void;
+  onOpenTimeline?: () => void;
   onEditSystem?: (sys: StarSystem) => void;
   onUpdateSystem?: (updated: StarSystem) => void;
   onClose?: () => void;
@@ -50,6 +52,7 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
   onSelectPOI,
   onZoomToSurface,
   onOpenAstrogation,
+  onOpenTimeline,
   onEditSystem,
   onUpdateSystem,
   onClose
@@ -289,8 +292,21 @@ export const SectorDetailsPanel: React.FC<SectorDetailsPanelProps> = ({
               className="space-y-4"
             >
               {/* Lore snippet */}
-              <div className="p-3 rounded-lg bg-[#040609] border border-[#f59e0b]/20 text-[#fef3c7] font-serif italic text-xs leading-relaxed">
-                « {system.loreSnippet} »
+              <div className="p-3 rounded-lg bg-[#040609] border border-[#f59e0b]/20 text-[#fef3c7] font-serif italic text-xs leading-relaxed space-y-2">
+                <p>« {system.loreSnippet} »</p>
+                
+                {onOpenTimeline && (
+                  <div className="pt-1 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => onOpenTimeline()}
+                      className="px-2.5 py-1 rounded bg-[#f59e0b]/10 hover:bg-[#f59e0b]/20 text-[#fbbf24] border border-[#f59e0b]/30 font-mono text-[10px] font-bold flex items-center gap-1.5 transition-colors"
+                    >
+                      <Clock className="w-3 h-3 text-[#f59e0b]" />
+                      <span>Consulter dans la Chronologie</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Soleils & Étoiles du Système */}

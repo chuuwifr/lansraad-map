@@ -20,6 +20,7 @@ import {
 interface DisplaySettingsModalProps {
   config: MapVisualConfig;
   onUpdateConfig: (updater: (prev: MapVisualConfig) => MapVisualConfig) => void;
+  onOpenBackupRestore?: () => void;
   onClose: () => void;
 }
 
@@ -65,6 +66,7 @@ const THEME_OPTIONS: { id: ThemePreset; name: string; color: string; desc: strin
 export const DisplaySettingsModal: React.FC<DisplaySettingsModalProps> = ({
   config,
   onUpdateConfig,
+  onOpenBackupRestore,
   onClose
 }) => {
   const handleThemeChange = (theme: ThemePreset) => {
@@ -387,6 +389,33 @@ export const DisplaySettingsModal: React.FC<DisplaySettingsModalProps> = ({
               Tous les effets sonores et bruitages sont désactivés pour une interface épurée et sans distraction sonore.
             </div>
           </div>
+
+          {/* 6. Archives & Sauvegardes */}
+          {onOpenBackupRestore && (
+            <div className="space-y-2 pt-2 border-t border-neutral-800">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-950/20 border border-emerald-600/40">
+                <div>
+                  <span className="font-cinzel text-xs font-bold text-emerald-300 block">
+                    Archives & Sauvegardes Holonet
+                  </span>
+                  <span className="text-[11px] text-neutral-400 font-mono">
+                    Exportation JSON, restauration et gestion des emplacements de sauvegarde
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    audioSynth.playHoloClick(1400);
+                    onClose();
+                    onOpenBackupRestore();
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-colors shadow-sm"
+                >
+                  OUVRIR ARCHIVES
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

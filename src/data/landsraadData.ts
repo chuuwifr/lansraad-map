@@ -2320,6 +2320,1371 @@ export const STAR_SYSTEMS_DATA: StarSystem[] = [
         threatLevel: 'Faible'
       }
     ]
+  },
+
+  // 32. AL DHANAB - Canis Majoris (Monde d'Épreuve Bene Gesserit)
+  {
+    id: 'al-dhanab',
+    name: 'Canis Majoris // Al Dhanab (Monde d\'Épreuve)',
+    starName: 'Alpha Canis Majoris B',
+    starType: 'Naine Blanche Dense (DA2)',
+    spectralClass: 'DA2',
+    starColor: '#c084fc',
+    starRadius: 6.9,
+    primaryPlanet: 'Al Dhanab (Crèche Expérimentale)',
+    coordinates: [130, -90, -145],
+    controllingHouse: 'bene_gesserit',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 8.6,
+    distanceFromArrakisLy: 318,
+    guildTariffSolaris: 28000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 14,
+    description: 'Monde artificiellement façonné et crèche secrète de la Sororité du Bene Gesserit. Qualifié de planète d\'épreuve perpétuelle pour tester l\'endurance physique et psychique des postulantes.',
+    atmosphereColor: '#a855f7',
+    surfaceTextureType: 'volcanic',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12100,
+      gravityG: 1.12,
+      dayLengthHours: 21.8,
+      yearLengthDays: 290,
+      surfaceTempAvgC: 38,
+      atmosphereComposition: '73% N2, 21% O2, 4% Gaz inertes, 2% Phéromones de synthèse',
+      populationTotal: '45 Millions de néophytes et Révérendes Mères',
+      capitalSettlement: 'Labyrinthe d\'Al Dhanab',
+      primaryExports: ['Acolytes Qualifiées', 'Sérums de Résilience', 'Cartographies Génétiques']
+    },
+    loreSnippet: 'Al Dhanab brise les faibles et forge les esprits capables de commander à la Voix.',
+    orbitingBodies: [
+      {
+        id: 'moon-dhanab-1',
+        name: 'Spire Orbitale de Vigilance',
+        type: 'space_station',
+        radius: 65,
+        size: 2.8,
+        speed: 0.009,
+        color: '#c084fc',
+        description: 'Station d\'observation psychométrique en orbite stationnaire.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-dhanab-labyrinth',
+        name: 'Labyrinthe des Épreuves Prana-Bindu',
+        type: 'academy',
+        controllingHouse: 'bene_gesserit',
+        coordinates: [22.0, -45.0],
+        securityLevel: 'MAXIMAL',
+        description: 'Chambres de privation sensorielle et parcours d\'endurance extrême sous gravité lourde.',
+        tacticalNotes: 'Accès strictement réservé aux Révérendes Mères et instructrices assermentées.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 33. PARMENTIER - Epsilon Tucanae (Deuxième Halte Zensunni)
+  {
+    id: 'parmentier',
+    name: 'Epsilon Tucanae // Parmentier (Deuxième Halte)',
+    starName: 'Epsilon Tucanae',
+    starType: 'Étoile Naine Dorée (G5V)',
+    spectralClass: 'G5V',
+    starColor: '#fde047',
+    starRadius: 7.0,
+    primaryPlanet: 'Parmentier (Sanctuaire Agricole)',
+    coordinates: [-140, 160, 85],
+    controllingHouse: 'fremen',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 75,
+    distanceFromArrakisLy: 335,
+    guildTariffSolaris: 17500,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: false,
+    fleetCount: 9,
+    description: 'Deuxième grande station de l\'exode des esclaves Zensunni lors de leur migration séculaire. Théâtre d\'une tragique épidémie déclenchée par Omnius durant le Jihad Butlérien.',
+    atmosphereColor: '#fbbf24',
+    surfaceTextureType: 'lush',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 13400,
+      gravityG: 0.97,
+      dayLengthHours: 23.9,
+      yearLengthDays: 355,
+      surfaceTempAvgC: 21,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Gaz nobles, 0.1% CO2',
+      populationTotal: '420 Millions',
+      capitalSettlement: 'Cité Mémorielle de Parmentier',
+      primaryExports: ['Céréales Rustiques', 'Huiles Essentielles', 'Manuscrits de la Première Diaspora']
+    },
+    loreSnippet: 'Parmentier pleure encore les martyrs de la Peste des Machines, mais ses champs fleurissent à nouveau.',
+    orbitingBodies: [
+      {
+        id: 'moon-parmentier-1',
+        name: 'Lune Sépulcre // Manion Alpha',
+        type: 'moon',
+        radius: 65,
+        size: 2.7,
+        speed: 0.007,
+        color: '#fef08a',
+        description: 'Lune stérile abritant les cénotaphes des martyrs du Jihad.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-parmentier-memorial',
+        name: 'Grand Cénotaphe des Martyrs Zensunni',
+        type: 'sacred_site',
+        controllingHouse: 'fremen',
+        coordinates: [15.2, 38.0],
+        securityLevel: 'HIGH',
+        description: 'Sanctuaire commémorant la libération des esclaves et leur refus de la servitude technologique.',
+        tacticalNotes: 'Lieu saint de recueillement spirituel sous la garde des anciens de la communauté.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 34. HARMONTHEP - Delta Eridani (Sixième Halte Zensunni)
+  {
+    id: 'harmonthep',
+    name: 'Delta Eridani // Harmonthep (Sixième Halte)',
+    starName: 'Delta Eridani (Rana)',
+    starType: 'Sous-géante Orange (K0IV)',
+    spectralClass: 'K0IV',
+    starColor: '#fb923c',
+    starRadius: 7.5,
+    primaryPlanet: 'Harmonthep (Monde Perdu)',
+    coordinates: [-90, -165, -120],
+    controllingHouse: 'fremen',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 29.5,
+    distanceFromArrakisLy: 310,
+    guildTariffSolaris: 24000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: false,
+    fleetCount: 11,
+    description: 'Sixième escale de la longue errance des pèlerins Zensunni avant leur arrivée sur Arrakis. Monde désertique rouge où furent codifiées les premières règles de la discipline de l\'eau.',
+    atmosphereColor: '#ea580c',
+    surfaceTextureType: 'desert',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12500,
+      gravityG: 0.94,
+      dayLengthHours: 24.6,
+      yearLengthDays: 380,
+      surfaceTempAvgC: 44,
+      atmosphereComposition: '77% N2, 21% O2, 1.8% Silice en suspension, 0.2% CO2',
+      populationTotal: '85 Millions',
+      capitalSettlement: 'Sietch Ancien d\'Harmon',
+      primaryExports: ['Pièges à Vent Antiques', 'Minéraux Réfractaires', 'Textiles Filtrants']
+    },
+    loreSnippet: 'Sur Harmonthep, nous avons appris que la soif est le miroir de l\'âme.',
+    orbitingBodies: [
+      {
+        id: 'moon-harmon-1',
+        name: 'Lune Rouge // Rana Minor',
+        type: 'moon',
+        radius: 65,
+        size: 2.5,
+        speed: 0.008,
+        color: '#fca5a5',
+        description: 'Lune de poussière ferrugineuse reflétant la lueur orange de Rana.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-harmon-caves',
+        name: 'Grottes des Dix-Mille Cantiques',
+        type: 'sietch',
+        controllingHouse: 'fremen',
+        coordinates: [-18.5, 92.0],
+        securityLevel: 'CLANDESTINE',
+        description: 'Parois rocheuses gravées des premiers psaumes de survie du désert.',
+        tacticalNotes: 'Réseaux de grottes inexplorées contenant des réservoirs d\'eau fossiles.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 35. DENDROS - Delta Cephei (La Canopée Infinie)
+  {
+    id: 'dendros',
+    name: 'Delta Cephei // Dendros (La Canopée)',
+    starName: 'Delta Cephei',
+    starType: 'Supergéante Pulsante Céphéide (F5Ib)',
+    spectralClass: 'F5Ib',
+    starColor: '#fef08a',
+    starRadius: 8.8,
+    primaryPlanet: 'Dendros (Monde des Forêts Géantes)',
+    coordinates: [165, 80, -180],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 890,
+    distanceFromArrakisLy: 720,
+    guildTariffSolaris: 36000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 18,
+    description: 'Monde spectaculaire recouvert de forêts primaires colossales aux arbres atteignant plusieurs kilomètres de haut. Fournit à la cour impériale et à la CHOAM les bois précieux et résines aromatiques les plus rares de l\'Imperium.',
+    atmosphereColor: '#10b981',
+    surfaceTextureType: 'lush',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 14800,
+      gravityG: 1.05,
+      dayLengthHours: 26.5,
+      yearLengthDays: 450,
+      surfaceTempAvgC: 24,
+      atmosphereComposition: '75% N2, 23.5% O2, 1% Vapeurs Végétales et Terpènes, 0.5% CO2',
+      populationTotal: '310 Millions d\'arboriculteurs et artisans',
+      capitalSettlement: 'Cité Suspendue de Sylva',
+      primaryExports: ['Bois de Fer Impérial', 'Résines Aromatiques de Dendros', 'Sèves Électrolytiques', 'Meubles de Trône']
+    },
+    loreSnippet: 'Un seul tronc de Dendros suffit à bâtir la grand-salle d\'un palais ducal.',
+    orbitingBodies: [
+      {
+        id: 'moon-dendros-1',
+        name: 'Lune Sylvestre // Foliage',
+        type: 'moon',
+        radius: 65,
+        size: 3.1,
+        speed: 0.006,
+        color: '#bbf7d0',
+        description: 'Lune verdoyante abritant les scieries orbitales zéro-gravité.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-dendros-mills',
+        name: 'Scieries et Chantiers Orbitaux de Sylva',
+        type: 'industrial',
+        controllingHouse: 'corrino',
+        coordinates: [8.5, -22.0],
+        securityLevel: 'HIGH',
+        description: 'Ascenseurs spatiaux transportant les poutres de bois de fer vers les chantiers de la CHOAM.',
+        tacticalNotes: 'Surveillance par drones forestiers contre les incendies spontanés.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 36. DUR - Beta Gruis (Monde Bastion)
+  {
+    id: 'dur',
+    name: 'Beta Gruis // Dur (La Forteresse)',
+    starName: 'Beta Gruis (Tiaki)',
+    starType: 'Géante Rouge Émissive (M5III)',
+    spectralClass: 'M5III',
+    starColor: '#f87171',
+    starRadius: 8.5,
+    primaryPlanet: 'Dur (Citadelle Cuirassée)',
+    coordinates: [-185, -140, 160],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 177,
+    distanceFromArrakisLy: 395,
+    guildTariffSolaris: 29000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 32,
+    description: 'Monde militaire imprenable, quartier général des légendaires « Forces de Dur ». Célèbre pour ses redoutes souterraines blindées et ses garnisons lourdes d\'artillerie orbitale.',
+    atmosphereColor: '#ef4444',
+    surfaceTextureType: 'industrial',
+    moonsCount: 3,
+    planetaryMetrics: {
+      diameterKm: 13900,
+      gravityG: 1.15,
+      dayLengthHours: 25.4,
+      yearLengthDays: 410,
+      surfaceTempAvgC: 18,
+      atmosphereComposition: '76% N2, 21% O2, 2% Gaz rares, 1% Poussières métalliques',
+      populationTotal: '540 Millions de soldats et ingénieurs balistiques',
+      capitalSettlement: 'Place Forte de Muzzafar',
+      primaryExports: ['Blindages Cuirassés', 'Tourelles de Défense Holtzman', 'Mercenaires de Choc']
+    },
+    loreSnippet: 'Les murailles de Dur n\'ont jamais cédé depuis dix mille ans.',
+    orbitingBodies: [
+      {
+        id: 'moon-dur-1',
+        name: 'Forteresse Cuirassée Orbitale Alpha',
+        type: 'defense_fortress',
+        radius: 65,
+        size: 3.5,
+        speed: 0.007,
+        color: '#94a3b8',
+        description: 'Station de tir orbital équipée de batteries de lasers lourds et de boucliers Holtzman.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-dur-bastion',
+        name: 'Citadelle Centrale des Forces de Dur',
+        type: 'military_base',
+        controllingHouse: 'corrino',
+        coordinates: [32.0, 15.0],
+        securityLevel: 'IMPERIAL',
+        population: '2.5 Millions de soldats d\'élite',
+        description: 'Complexe fortifié souterrain résistant aux frappes nucléaires orbitales directes.',
+        tacticalNotes: 'Quartier général du haut commandement des forces d\'intervention du Landsraad.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 37. DUVALLE - Theta Centauri (Monde de la Dispersion)
+  {
+    id: 'duvalle',
+    name: 'Theta Centauri // Duvalle',
+    starName: 'Theta Centauri (Menkent)',
+    starType: 'Géante Orange Brillante (K0IIIb)',
+    spectralClass: 'K0IIIb',
+    starColor: '#fdba74',
+    starRadius: 7.6,
+    primaryPlanet: 'Duvalle (Bastion des Tisseurs)',
+    coordinates: [75, -170, 110],
+    controllingHouse: 'atreides',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 61,
+    distanceFromArrakisLy: 290,
+    guildTariffSolaris: 22000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 16,
+    description: 'Monde colonial fondé à l\'aube de la Dispersion. Réputé pour ses tisseuses de nano-fibres thermiques, ses dômes de verre polarisé et sa communauté de réfugiés fidèles aux valeurs atréides.',
+    atmosphereColor: '#38bdf8',
+    surfaceTextureType: 'ocean',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 13200,
+      gravityG: 0.98,
+      dayLengthHours: 24.2,
+      yearLengthDays: 360,
+      surfaceTempAvgC: 17,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Argon, 0.1% Vapeurs Marines',
+      populationTotal: '380 Millions',
+      capitalSettlement: 'Port Menkent',
+      primaryExports: ['Tissus Thermiques Polarisés', 'Filtres Moléculaires', 'Algues Protéinées']
+    },
+    loreSnippet: 'Sur Duvalle, chaque fil tissé renforce le lien brisé de la race humaine.',
+    orbitingBodies: [
+      {
+        id: 'moon-duvalle-1',
+        name: 'Lune Azurée // Menkent Minor',
+        type: 'moon',
+        radius: 65,
+        size: 2.6,
+        speed: 0.008,
+        color: '#bae6fd',
+        description: 'Lune brillante régulant les courants marins de Duvalle.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-duvalle-docks',
+        name: 'Manufacture et Docks de Port Menkent',
+        type: 'industrial',
+        controllingHouse: 'atreides',
+        coordinates: [12.0, -78.0],
+        securityLevel: 'HIGH',
+        description: 'Centres de tissage automatisé de vêtements pour climats hostiles.',
+        tacticalNotes: 'Boucliers maritimes de défense passive déployés.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 38. GANSIREED - Nu Bootis (Le Grenier Céleste)
+  {
+    id: 'gansireed',
+    name: 'Nu Bootis // Gansireed (Le Grenier Céleste)',
+    starName: 'Nu Bootis',
+    starType: 'Étoile Blanche Tempérée (A8V)',
+    spectralClass: 'A8V',
+    starColor: '#fde047',
+    starRadius: 7.7,
+    primaryPlanet: 'Gansireed (Terres d\'Abondance)',
+    coordinates: [195, -60, -90],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Crucial',
+    distanceFromTerraLy: 87,
+    distanceFromArrakisLy: 340,
+    guildTariffSolaris: 23000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 20,
+    description: 'L\'un des plus vastes greniers agricoles de l\'Imperium. Ses immenses plaines moissonnées par des flottes automatisées fournissent les rations de blé, synth-céréales et légumineuses à plus de cent mondes industriels de la CHOAM.',
+    atmosphereColor: '#eab308',
+    surfaceTextureType: 'lush',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 14100,
+      gravityG: 1.01,
+      dayLengthHours: 24.5,
+      yearLengthDays: 375,
+      surfaceTempAvgC: 23,
+      atmosphereComposition: '78% N2, 21% O2, 0.8% Poussières de Pollen, 0.2% Gaz rares',
+      populationTotal: '920 Millions d\'agronomes et techniciens',
+      capitalSettlement: 'Cité des Silos Impériaux',
+      primaryExports: ['Grains de Blé Gansireed', 'Protéines Synthétiques', 'Engrais Naturels Enrichis', 'Moissonneuses Agricoles']
+    },
+    loreSnippet: 'Si Gansireed s\'arrête de moissonner, un quart du Landsraad meurt de faim.',
+    orbitingBodies: [
+      {
+        id: 'moon-gans-1',
+        name: 'Silo Orbital Géant // Ceres Major',
+        type: 'orbital_refinery',
+        radius: 65,
+        size: 3.2,
+        speed: 0.007,
+        color: '#fef08a',
+        description: 'Station de stockage et de déshydratation des céréales pour le fret supraluminique.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-gansireed-silos',
+        name: 'Complexe des Silos Centraux de la CHOAM',
+        type: 'industrial',
+        controllingHouse: 'corrino',
+        coordinates: [28.0, -112.0],
+        securityLevel: 'IMPERIAL',
+        description: 'Entrepôts climatisés stockant plus de 500 millions de tonnes de réserves alimentaires stratégiques.',
+        tacticalNotes: 'Protéger en priorité absolue contre toute contamination bactériologique.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 39. ZANOVAR - Mu Arae (Cité de Cristal des Boro)
+  {
+    id: 'zanovar',
+    name: 'Mu Arae // Zanovar (Cité de Cristal)',
+    starName: 'Mu Arae (Cervantes)',
+    starType: 'Étoile Naine Jaune (G3IV-V)',
+    spectralClass: 'G3IV-V',
+    starColor: '#fef08a',
+    starRadius: 7.2,
+    primaryPlanet: 'Zanovar (Fief des Boro)',
+    coordinates: [-120, -180, 70],
+    controllingHouse: 'harkonnen',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 50.6,
+    distanceFromArrakisLy: 295,
+    guildTariffSolaris: 26000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: false,
+    fleetCount: 15,
+    description: 'Ancien fief prospère de la Maison Boro, célèbre pour ses tours d\'opale et son artisanat du verre. Tragiquement dévasté et asservi lors des campagnes punitives des Harkonnen.',
+    atmosphereColor: '#ef4444',
+    surfaceTextureType: 'volcanic',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12800,
+      gravityG: 1.03,
+      dayLengthHours: 23.8,
+      yearLengthDays: 345,
+      surfaceTempAvgC: 36,
+      atmosphereComposition: '74% N2, 19% O2, 5% Gaz de Combustion, 2% Silice pulvérisée',
+      populationTotal: '160 Millions',
+      capitalSettlement: 'Ruines de la Cité de Cristal',
+      primaryExports: ['Verre Trempé Réfractaire', 'Quartz Fissile', 'Métaux Récupérés']
+    },
+    loreSnippet: 'Les éclats de cristal de Zanovar racontent la cruauté du Baron et le destin des Maisons vaincues.',
+    orbitingBodies: [
+      {
+        id: 'moon-zanovar-1',
+        name: 'Lune Cendrée // Boro Minor',
+        type: 'moon',
+        radius: 65,
+        size: 2.4,
+        speed: 0.009,
+        color: '#cbd5e1',
+        description: 'Lune témoin des bombardements orbitaux dévastateurs.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-zanovar-ruins',
+        name: 'Ruines des Palais de Cristal & Fours Harkonnen',
+        type: 'industrial',
+        controllingHouse: 'harkonnen',
+        coordinates: [-15.0, 48.0],
+        securityLevel: 'HIGH',
+        description: 'Fonderies de verre et chantiers de travail forcé sous surveillance de gardes Harkonnen.',
+        tacticalNotes: 'Mouvements insurrectionnels clandestins de survivants de la Maison Boro.',
+        threatLevel: 'Critique'
+      }
+    ]
+  },
+
+  // 40. KRONIN - Zeta Reticuli (Monde Frontière)
+  {
+    id: 'kronin',
+    name: 'Zeta Reticuli // Kronin',
+    starName: 'Zeta Reticuli',
+    starType: 'Système Binaire Jaune (G2V)',
+    spectralClass: 'G2V',
+    starColor: '#fde047',
+    starRadius: 7.1,
+    primaryPlanet: 'Kronin (La Vigie du Vide)',
+    coordinates: [-160, 110, -170],
+    controllingHouse: 'moritani',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 39.5,
+    distanceFromArrakisLy: 365,
+    guildTariffSolaris: 27000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 22,
+    description: 'Monde aride et rocailleux sur la frontière externe du Landsraad. Utilisé comme base d\'interception avancée, station d\'écoute de l\'espace profond et repaire de mercenaires.',
+    atmosphereColor: '#991b1b',
+    surfaceTextureType: 'desert',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 12200,
+      gravityG: 0.96,
+      dayLengthHours: 26.0,
+      yearLengthDays: 390,
+      surfaceTempAvgC: 30,
+      atmosphereComposition: '77% N2, 20% O2, 2% CO2, 1% Poussières de basalte',
+      populationTotal: '140 Millions',
+      capitalSettlement: 'Forteresse de Kronin Peak',
+      primaryExports: ['Renseignements Militaires', 'Stations d\'Écoute', 'Mercenaires Sans Fief']
+    },
+    loreSnippet: 'À Kronin, le moindre murmure dans le vide hyperspatial est capté et monnayé.',
+    orbitingBodies: [
+      {
+        id: 'moon-kronin-1',
+        name: 'Antenne Radar Orbitale // Dish-9',
+        type: 'space_station',
+        radius: 65,
+        size: 2.8,
+        speed: 0.008,
+        color: '#dc2626',
+        description: 'Réseau d\'antennes paraboliques espionnant les sauts de Heighliners.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-kronin-outpost',
+        name: 'Base d\'Interception & Casemates de Moritani',
+        type: 'military_base',
+        controllingHouse: 'moritani',
+        coordinates: [42.0, 75.0],
+        securityLevel: 'HIGH',
+        description: 'Poste de commandement avancé équipé de radars tachyoniens à longue portée.',
+        tacticalNotes: 'Activité de contrebande intense et liens secrets avec des maisons renégates.',
+        threatLevel: 'Critique'
+      }
+    ]
+  },
+
+  // 41. LERNAEUS - Epsilon Hydrae (Archipels Bio-luminescents)
+  {
+    id: 'lernaeus',
+    name: 'Epsilon Hydrae // Lernaeus',
+    starName: 'Epsilon Hydrae',
+    starType: 'Étoile Multiple Bleue-Jaune (G8III)',
+    spectralClass: 'G8III',
+    starColor: '#38bdf8',
+    starRadius: 7.9,
+    primaryPlanet: 'Lernaeus (Les Mille Lagons)',
+    coordinates: [140, -150, 60],
+    controllingHouse: 'ecaz',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 135,
+    distanceFromArrakisLy: 330,
+    guildTariffSolaris: 25000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 16,
+    description: 'Monde océanique chaud parsemé de dizaines de milliers d\'îles coralliennes bio-luminescentes. Premier producteur impérial de pigments vivants pour l\'art d\'Ecaz et d\'élixirs médicaux marins.',
+    atmosphereColor: '#06b6d4',
+    surfaceTextureType: 'ocean',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 13700,
+      gravityG: 1.00,
+      dayLengthHours: 24.4,
+      yearLengthDays: 370,
+      surfaceTempAvgC: 28,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Vapeurs Marines Iodo-Brome, 0.1% Gaz rares',
+      populationTotal: '270 Millions',
+      capitalSettlement: 'Lagon d\'Or de Lernaeus',
+      primaryExports: ['Pigments Bio-luminescents', 'Élixirs de Rajeunissement Marins', 'Coraux Télépathiques', 'Perles d\'Ecaz']
+    },
+    loreSnippet: 'La nuit sur Lernaeus est plus lumineuse que le jour, baignée par la lueur des mers vivantes.',
+    orbitingBodies: [
+      {
+        id: 'moon-lern-1',
+        name: 'Lune Corallienne // Biolux',
+        type: 'moon',
+        radius: 65,
+        size: 2.9,
+        speed: 0.006,
+        color: '#67e8f9',
+        description: 'Lune blanche dont les marées déclenchent la floraison des coraux luminescents.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-lernaeus-laboratories',
+        name: 'Laboratoires Bio-Marins & Serres Flottantes',
+        type: 'industrial',
+        controllingHouse: 'ecaz',
+        coordinates: [-8.0, 142.0],
+        securityLevel: 'MAXIMAL',
+        description: 'Centres de synthèse des drogues de perception et des élixirs artistiques d\'Ecaz.',
+        tacticalNotes: 'Protocoles de biosécurité sévères pour prévenir la contamination des lagons.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 42. NIUSHE - Beta Trianguli (Retraite Diplomatique)
+  {
+    id: 'niushe',
+    name: 'Beta Trianguli // Niushe',
+    starName: 'Beta Trianguli',
+    starType: 'Étoile Blanche Chaude (A5III)',
+    spectralClass: 'A5III',
+    starColor: '#e0f2fe',
+    starRadius: 7.6,
+    primaryPlanet: 'Niushe (Les Jardins Alpins)',
+    coordinates: [180, 140, -110],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 127,
+    distanceFromArrakisLy: 380,
+    guildTariffSolaris: 20000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 15,
+    description: 'Monde de montagnes majestueuses, de thermes volcaniques et de vallées verdoyantes. Lieu de villégiature et de pourparlers secrets privilégié par les diplomates du Landsraad et de la CHOAM.',
+    atmosphereColor: '#38bdf8',
+    surfaceTextureType: 'lush',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 13100,
+      gravityG: 0.99,
+      dayLengthHours: 23.7,
+      yearLengthDays: 350,
+      surfaceTempAvgC: 19,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Argon, 0.1% Vapeurs Thermales Minéralisées',
+      populationTotal: '190 Millions',
+      capitalSettlement: 'Pavillon des Traités de Niushe',
+      primaryExports: ['Eaux Minérales Thérapeutiques', 'Soies de Montagne', 'Accords Diplomatiques', 'Vins de Glace']
+    },
+    loreSnippet: 'Plus d\'un conflit interplanétaire s\'est éteint dans les vapeurs bienfaisantes des thermes de Niushe.',
+    orbitingBodies: [
+      {
+        id: 'moon-niushe-1',
+        name: 'Lune d\'Albâtre // Serena',
+        type: 'moon',
+        radius: 65,
+        size: 2.7,
+        speed: 0.007,
+        color: '#f1f5f9',
+        description: 'Lune pure illuminant les cimes enneigées de Niushe.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-niushe-villas',
+        name: 'Palais & Résidences des Émissaires du Landsraad',
+        type: 'capital',
+        controllingHouse: 'corrino',
+        coordinates: [45.0, -30.0],
+        securityLevel: 'IMPERIAL',
+        description: 'Complexe résidentiel luxueux doté de salles de conseil anti-espionnage sous bouclier Holtzman.',
+        tacticalNotes: 'Zone de neutralité armée sous tutelle de la Garde Impériale.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 43. ATAR - Delta Corvi (Le Feu Sacré)
+  {
+    id: 'atar',
+    name: 'Delta Corvi // Atar (Le Feu Sacré)',
+    starName: 'Delta Corvi (Algorab)',
+    starType: 'Étoile Binaire Bleue-Blanche (B9.5V)',
+    spectralClass: 'B9.5V',
+    starColor: '#93c5fd',
+    starRadius: 8.1,
+    primaryPlanet: 'Atar (Monde Géothermique)',
+    coordinates: [-70, -190, -85],
+    controllingHouse: 'harkonnen',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 87,
+    distanceFromArrakisLy: 290,
+    guildTariffSolaris: 26500,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 26,
+    description: 'Monde tellurique volcanique dominé par des éruptions de lave basaltique et des puits géothermiques gigantesques. Utilisé par les Harkonnen pour la production massive d\'énergie et le raffinage d\'obsidienne industrielle.',
+    atmosphereColor: '#dc2626',
+    surfaceTextureType: 'volcanic',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 13500,
+      gravityG: 1.10,
+      dayLengthHours: 25.1,
+      yearLengthDays: 395,
+      surfaceTempAvgC: 52,
+      atmosphereComposition: '71% N2, 18% O2, 6% Gaz Soufrés, 5% Vapeurs Volcaniques',
+      populationTotal: '310 Millions d\'ouvriers des fourneaux',
+      capitalSettlement: 'Complexe Magmatique d\'Algorab',
+      primaryExports: ['Énergie Géothermique Condensée', 'Obsidienne Lourde', 'Soufre Industriel', 'Alliages Thermorésistants']
+    },
+    loreSnippet: 'À Atar, le feu ne dort jamais : il alimente les forges de guerre du Baron.',
+    orbitingBodies: [
+      {
+        id: 'moon-atar-1',
+        name: 'Lune Pyrogène // Ignis',
+        type: 'moon',
+        radius: 65,
+        size: 3.0,
+        speed: 0.007,
+        color: '#f87171',
+        description: 'Lune couverte de lave solidifiée et de réflecteurs solaires.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-atar-geothermal',
+        name: 'Centrale Géothermique Primale & Fonderies d\'Atar',
+        type: 'industrial',
+        controllingHouse: 'harkonnen',
+        coordinates: [18.0, 105.0],
+        securityLevel: 'MAXIMAL',
+        description: 'Puits de forage s\'enfonçant jusqu\'au manteau magmatique pour alimenter les convertisseurs énergétiques.',
+        tacticalNotes: 'Températures de surface extrêmes nécessitant des combinaisons pressurisées renforcées.',
+        threatLevel: 'Critique'
+      }
+    ]
+  },
+
+  // 44. ARTISIA - Gamma Aquarii (Eaux Calmes)
+  {
+    id: 'artisia',
+    name: 'Gamma Aquarii // Artisia (Eaux Calmes)',
+    starName: 'Gamma Aquarii (Sadachbia)',
+    starType: 'Étoile Binaire Blanche (A0V)',
+    spectralClass: 'A0V',
+    starColor: '#bae6fd',
+    starRadius: 7.4,
+    primaryPlanet: 'Artisia (Monde Fluvial)',
+    coordinates: [-150, 60, 140],
+    controllingHouse: 'atreides',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 164,
+    distanceFromArrakisLy: 310,
+    guildTariffSolaris: 19500,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 14,
+    description: 'Monde pacifique d\'océans d\'eau douce, de lacs immenses et de rivières cristallines. Berceau de conservatoires musicaux, d\'écoles de poésie et d\'artisans luthiers fabricant des balisets d\'une pureté acoustique incomparable.',
+    atmosphereColor: '#0ea5e9',
+    surfaceTextureType: 'ocean',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 13300,
+      gravityG: 1.01,
+      dayLengthHours: 24.0,
+      yearLengthDays: 365,
+      surfaceTempAvgC: 20,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Argon, 0.1% Brumes d\'Eau Douce',
+      populationTotal: '340 Millions',
+      capitalSettlement: 'Cité Lacustre de Sadachbia',
+      primaryExports: ['Balisets de Maîtres', 'Instruments Harmoniques', 'Poésies et Chants Historiques', 'Eau Douce Pure']
+    },
+    loreSnippet: 'Sur Artisia, les cordes d\'un baliset font vibrer les cœurs jusqu\'aux confins du Landsraad.',
+    orbitingBodies: [
+      {
+        id: 'moon-artisia-1',
+        name: 'Lune Harmonique // Melodia',
+        type: 'moon',
+        radius: 65,
+        size: 2.8,
+        speed: 0.008,
+        color: '#e0f2fe',
+        description: 'Lune pâle dont la lumière inspire les poètes et troubadours.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-artisia-conservatory',
+        name: 'Conservatoire Suprême des Balisets & Arts Harmoniques',
+        type: 'academy',
+        controllingHouse: 'atreides',
+        coordinates: [24.0, -65.0],
+        securityLevel: 'HIGH',
+        description: 'Institut prestigieux où fut formé Gurney Halleck et les plus grands maîtres musiciens de l\'Empire.',
+        tacticalNotes: 'Refuge culturel sous protection de la Maison Atréides.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 45. WALGIS - Iota Serpentis (Tempêtes Perpétuelles)
+  {
+    id: 'walgis',
+    name: 'Iota Serpentis // Walgis (Tempêtes Perpétuelles)',
+    starName: 'Iota Serpentis',
+    starType: 'Étoile Naine Blanche (A2V)',
+    spectralClass: 'A2V',
+    starColor: '#e2e8f0',
+    starRadius: 7.3,
+    primaryPlanet: 'Walgis (L\'Enfer des Vents)',
+    coordinates: [110, 175, 55],
+    controllingHouse: 'ginaz',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 192,
+    distanceFromArrakisLy: 350,
+    guildTariffSolaris: 25000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 16,
+    description: 'Monde inhospitalier balayé par des ouragans continus et des éclairs ioniques permanents. Utilisé par l\'Académie de Ginaz et les troupes d\'assaut pour l\'entraînement au combat par conditions météorologiques extrêmes.',
+    atmosphereColor: '#64748b',
+    surfaceTextureType: 'synthetic',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 14000,
+      gravityG: 1.12,
+      dayLengthHours: 22.5,
+      yearLengthDays: 320,
+      surfaceTempAvgC: 11,
+      atmosphereComposition: '73% N2, 19% O2, 5% Vapeurs Ionisées, 3% Gaz Nobles',
+      populationTotal: '95 Millions de duellistes et soldats en entraînement',
+      capitalSettlement: 'Bastion Tempestaire de Walgis',
+      primaryExports: ['Combattants d\'Élite', 'Boucliers Ioniques Renforcés', 'Données de Survie Extrême']
+    },
+    loreSnippet: 'Qui maîtrise son épée sous la tempête de Walgis n\'a plus rien à craindre des hommes.',
+    orbitingBodies: [
+      {
+        id: 'moon-walgis-1',
+        name: 'Lune Foudroyée // Vortex',
+        type: 'moon',
+        radius: 65,
+        size: 2.7,
+        speed: 0.009,
+        color: '#94a3b8',
+        description: 'Lune rocheuse frappée d\'arcs électriques atmosphériques.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-walgis-arena',
+        name: 'Arène des Tempêtes de l\'Académie de Ginaz',
+        type: 'academy',
+        controllingHouse: 'ginaz',
+        coordinates: [38.0, 112.0],
+        securityLevel: 'HIGH',
+        description: 'Plateformes de combat à ciel ouvert soumises à des vents de plus de 250 km/h.',
+        tacticalNotes: 'Zone de qualification pour les ceintures de Maîtres d\'Armes de rang supérieur.',
+        threatLevel: 'Modéré'
+      }
+    ]
+  },
+
+  // 46. ALPHA CORVUS - Alpha Corvi (Nœud Commercial)
+  {
+    id: 'alpha-corvus',
+    name: 'Alpha Corvi // Alpha Corvus',
+    starName: 'Alpha Corvi (Alchiba)',
+    starType: 'Étoile Naine Blanche-Jaune (F1V)',
+    spectralClass: 'F1V',
+    starColor: '#fef08a',
+    starRadius: 7.5,
+    primaryPlanet: 'Alpha Corvus (Hub de la Guilde)',
+    coordinates: [-110, -80, -185],
+    controllingHouse: 'guild',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 49,
+    distanceFromArrakisLy: 275,
+    guildTariffSolaris: 16000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 30,
+    description: 'Carrefour spatial majeur de la Guilde reliant le Noyau impérial aux secteurs de la périphérie lointaine. Immenses stations d\'aiguillage orbitales et entrepôts de la CHOAM.',
+    atmosphereColor: '#06b6d4',
+    surfaceTextureType: 'synthetic',
+    moonsCount: 3,
+    planetaryMetrics: {
+      diameterKm: 13600,
+      gravityG: 1.02,
+      dayLengthHours: 24.8,
+      yearLengthDays: 372,
+      surfaceTempAvgC: 21,
+      atmosphereComposition: '77% N2, 21% O2, 1.2% Argon, 0.8% Vapeurs de Carburant Supraluminique',
+      populationTotal: '480 Millions d\'agents de la Guilde et marchands',
+      capitalSettlement: 'Spire Marchande d\'Alchiba',
+      primaryExports: ['Services de Fret Spatiale', 'Bourses de la CHOAM', 'Assurances de Transport']
+    },
+    loreSnippet: 'Par Alpha Corvus transitent chaque jour les richesses de mille planètes souveraines.',
+    orbitingBodies: [
+      {
+        id: 'moon-corvus-1',
+        name: 'Port Spatial Heighliner Nexus',
+        type: 'heighliner_dock',
+        radius: 65,
+        size: 3.6,
+        speed: 0.006,
+        color: '#06b6d4',
+        description: 'Gigantesque anneau d\'amarrage pour cinq Heighliners simultanés.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-corvus-exchange',
+        name: 'Bourse Commerciale & Quais de Transbordement de la Guilde',
+        type: 'spaceport',
+        controllingHouse: 'guild',
+        coordinates: [14.0, -12.0],
+        securityLevel: 'IMPERIAL',
+        description: 'Centre de compensation des contrats de transport interstellaire et de fret lourd.',
+        tacticalNotes: 'Statut d\'immunité diplomatique et surveillance stricte des Navigateurs.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 47. CROMPTON - Lambda Gruis (Fonderies d'Airain)
+  {
+    id: 'crompton',
+    name: 'Lambda Gruis // Crompton',
+    starName: 'Lambda Gruis',
+    starType: 'Étoile Rouge-Orange Tempérée (K3V)',
+    spectralClass: 'K3V',
+    starColor: '#f97316',
+    starRadius: 7.2,
+    primaryPlanet: 'Crompton (Monde Minier)',
+    coordinates: [-210, 50, -130],
+    controllingHouse: 'richese',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 110,
+    distanceFromArrakisLy: 320,
+    guildTariffSolaris: 21500,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 18,
+    description: 'Monde minier ultra-dense exploité par la Maison Richese pour ses filons de titane, de platine et de tungstène. Ses fonderies atmosphériques alimentent les usines d\'horlogerie et de blindages de précision.',
+    atmosphereColor: '#ea580c',
+    surfaceTextureType: 'industrial',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 14400,
+      gravityG: 1.22,
+      dayLengthHours: 27.4,
+      yearLengthDays: 425,
+      surfaceTempAvgC: 35,
+      atmosphereComposition: '72% N2, 19% O2, 5% Vapeurs Métalliques, 4% Gaz Rares',
+      populationTotal: '390 Millions de mineurs et métallurgistes',
+      capitalSettlement: 'Cité Minière de Crompton Prime',
+      primaryExports: ['Lingots de Titane Spatial', 'Platine Raffiné', 'Micro-Alliages de Richese', 'Blindages Polarisés']
+    },
+    loreSnippet: 'Les métaux de Crompton ont la réputation d\'encaisser les coups des plus puissantes ogives laser.',
+    orbitingBodies: [
+      {
+        id: 'moon-cromp-1',
+        name: 'Lune Fonderie // Vulcanis',
+        type: 'orbital_refinery',
+        radius: 65,
+        size: 3.1,
+        speed: 0.007,
+        color: '#ea580c',
+        description: 'Usine de fusion métallurgique en impesanteur orbitale.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-crompton-smelters',
+        name: 'Fonderies Géantes & Fours à Arc Électrique de Crompton',
+        type: 'industrial',
+        controllingHouse: 'richese',
+        coordinates: [-28.0, 95.0],
+        securityLevel: 'HIGH',
+        description: 'Complexe sidérurgique produisant les carcasses d\'instruments scientifiques de précision.',
+        tacticalNotes: 'Haute sécurité technologique pour prévenir l\'espionnage industriel d\'Ix.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 48. GAAR - Gamma Crateris (Mondes Métalliques)
+  {
+    id: 'gaar',
+    name: 'Gamma Crateris // Gaar',
+    starName: 'Gamma Crateris',
+    starType: 'Étoile Blanche Brillante (A9V)',
+    spectralClass: 'A9V',
+    starColor: '#e0e7ff',
+    starRadius: 7.3,
+    primaryPlanet: 'Gaar (Monde de Fer)',
+    coordinates: [135, -120, -160],
+    controllingHouse: 'richese',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 84,
+    distanceFromArrakisLy: 310,
+    guildTariffSolaris: 22000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 15,
+    description: 'Planète dense et riche en métaux lourds, gérée par des consortiums de Richese. Ses mines souterraines automatisées extraient les minerais nécessaires aux circuits logiques analogiques et aux générateurs Holtzman.',
+    atmosphereColor: '#6366f1',
+    surfaceTextureType: 'volcanic',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 12900,
+      gravityG: 1.18,
+      dayLengthHours: 23.2,
+      yearLengthDays: 340,
+      surfaceTempAvgC: 28,
+      atmosphereComposition: '74% N2, 20% O2, 4% Gaz de Combustion, 2% Poussières de Fer',
+      populationTotal: '210 Millions',
+      capitalSettlement: 'Complexe Automatisé de Gaar',
+      primaryExports: ['Noyaux de Circuits Analogiques', 'Minerais de Terres Rares', 'Composants Micromécaniques']
+    },
+    loreSnippet: 'À Gaar, la terre résonne comme une enclume sous les marteaux automatisés des puits de mine.',
+    orbitingBodies: [
+      {
+        id: 'moon-gaar-1',
+        name: 'Lune Ferrifère // Ferrum',
+        type: 'moon',
+        radius: 65,
+        size: 2.6,
+        speed: 0.008,
+        color: '#a5b4fc',
+        description: 'Lune rocheuse magnétique riche en hématite.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-gaar-mines',
+        name: 'Puits de Mine Automatisés & Forges Subterranéennes',
+        type: 'industrial',
+        controllingHouse: 'richese',
+        coordinates: [12.5, 62.0],
+        securityLevel: 'HIGH',
+        description: 'Excavations robotisées contrôlées par des Mentats coordinateurs de production.',
+        tacticalNotes: 'Champs électromagnétiques denses perturbant les communications conventionnelles.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 49. GALICIA - Sigma Sagittarii (Plaines Synthétiques)
+  {
+    id: 'galicia',
+    name: 'Sigma Sagittarii // Galicia',
+    starName: 'Sigma Sagittarii (Nunki)',
+    starType: 'Étoile Bleue-Blanche Massive (B2.5V)',
+    spectralClass: 'B2.5V',
+    starColor: '#93c5fd',
+    starRadius: 8.2,
+    primaryPlanet: 'Galicia (Les Steppes Impériales)',
+    coordinates: [155, 65, 120],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 228,
+    distanceFromArrakisLy: 360,
+    guildTariffSolaris: 24500,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 22,
+    description: 'Vaste domaine agro-pastoral et centre de bio-ingénierie de la Maison Corrino. Ses immenses plaines abritent des troupeaux de bétail génétiquement modifié et des complexes d\'élevage pour les garnisons militaires.',
+    atmosphereColor: '#38bdf8',
+    surfaceTextureType: 'lush',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 13800,
+      gravityG: 1.03,
+      dayLengthHours: 24.6,
+      yearLengthDays: 380,
+      surfaceTempAvgC: 22,
+      atmosphereComposition: '78% N2, 21% O2, 0.8% Argon, 0.2% Gaz Organiques',
+      populationTotal: '520 Millions',
+      capitalSettlement: 'Cité Pastorale de Nunki',
+      primaryExports: ['Bétail Génétiquement Renforcé', 'Protéines de Combat', 'Cuirs Impériaux', 'Céréales Dorées']
+    },
+    loreSnippet: 'Les légions impériales marchent avec les vivres et l\'énergie fournies par les plaines de Galicia.',
+    orbitingBodies: [
+      {
+        id: 'moon-galicia-1',
+        name: 'Lune Pastorale // Nunki Minor',
+        type: 'moon',
+        radius: 65,
+        size: 2.9,
+        speed: 0.007,
+        color: '#bfdbfe',
+        description: 'Lune brillante éclairant les vastes steppes nocturnes de Galicia.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-galicia-farms',
+        name: 'Centres de Bio-Élevage & Réserves de la Maison Corrino',
+        type: 'industrial',
+        controllingHouse: 'corrino',
+        coordinates: [35.0, -82.0],
+        securityLevel: 'HIGH',
+        description: 'Fermes automatisées produisant des rations énergétiques pour les légions de Sardaukars.',
+        tacticalNotes: 'Contrôles vétérinaires stricts supervisés par des envoyés de la Cour Impériale.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 50. CEDON - Beta Fornacis (Vignobles en Terrasses)
+  {
+    id: 'cedon',
+    name: 'Beta Fornacis // Cedon (Vignobles en Terrasses)',
+    starName: 'Beta Fornacis',
+    starType: 'Étoile Jaune Tempérée (G8V)',
+    spectralClass: 'G8V',
+    starColor: '#fef08a',
+    starRadius: 7.1,
+    primaryPlanet: 'Cedon (Monde Vinicole)',
+    coordinates: [-175, -85, 140],
+    controllingHouse: 'atreides',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 178,
+    distanceFromArrakisLy: 330,
+    guildTariffSolaris: 18000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 12,
+    description: 'Monde tempéré aux collines douces réputé pour ses terrasses viticoles millénaires et sa production de grands crus réputés à la cour du Landsraad, rivalisant avec les crus de Caladan.',
+    atmosphereColor: '#22c55e',
+    surfaceTextureType: 'lush',
+    moonsCount: 1,
+    planetaryMetrics: {
+      diameterKm: 13000,
+      gravityG: 0.99,
+      dayLengthHours: 24.1,
+      yearLengthDays: 362,
+      surfaceTempAvgC: 18,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Gaz nobles, 0.1% Arômes Végétaux',
+      populationTotal: '260 Millions',
+      capitalSettlement: 'Vignobles de Cedon Prime',
+      primaryExports: ['Vins Millésimés de Cedon', 'Fruits Tempérés', 'Huiles d\'Olive Célestes', 'Verres de Dégustation']
+    },
+    loreSnippet: 'À la table des ducs et des empereurs, le vin de Cedon délie les langues les plus prudentes.',
+    orbitingBodies: [
+      {
+        id: 'moon-cedon-1',
+        name: 'Lune Dorée // Bacchus',
+        type: 'moon',
+        radius: 65,
+        size: 2.5,
+        speed: 0.008,
+        color: '#bbf7d0',
+        description: 'Lune créant des microclimats idéaux pour la maturation des grappes de raisin.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-cedon-cellars',
+        name: 'Caves et Domaines Ducaux de Cedon',
+        type: 'capital',
+        controllingHouse: 'atreides',
+        coordinates: [18.0, 42.0],
+        securityLevel: 'HIGH',
+        description: 'Réserves de vin millénaire scellées sous contrôle de sommeliers impériaux.',
+        tacticalNotes: 'Haute valeur marchande sur les bourses de la CHOAM.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 51. KOMIDER - Tau Draconis (Frontière Noire)
+  {
+    id: 'komider',
+    name: 'Tau Draconis // Komider',
+    starName: 'Tau Draconis',
+    starType: 'Étoile Rougeâtre Froide (M1V)',
+    spectralClass: 'M1V',
+    starColor: '#f87171',
+    starRadius: 6.9,
+    primaryPlanet: 'Komider (Le Poste de l\'Ombre)',
+    coordinates: [-130, 180, -95],
+    controllingHouse: 'moritani',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 145,
+    distanceFromArrakisLy: 375,
+    guildTariffSolaris: 28500,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 20,
+    description: 'Monde de frontière reculé au climat austère, plaque tournante des marchés noirs de l\'Épice volée, des armes interdites et des corsaires opérant sous lettres de marque officieuses.',
+    atmosphereColor: '#991b1b',
+    surfaceTextureType: 'desert',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 12400,
+      gravityG: 0.95,
+      dayLengthHours: 25.8,
+      yearLengthDays: 405,
+      surfaceTempAvgC: 15,
+      atmosphereComposition: '76% N2, 20% O2, 3% CO2, 1% Fumées d\'Hydrocarbures',
+      populationTotal: '110 Millions de contrebandiers et mercenaires',
+      capitalSettlement: 'Rade Clandestine de Komider',
+      primaryExports: ['Épice de Contrebande', 'Armes Non Matriculées', 'Poisons Rares', 'Faux Papiers de la Guilde']
+    },
+    loreSnippet: 'Sur Komider, aucune question n\'est posée tant que les Solaris sonnent juste.',
+    orbitingBodies: [
+      {
+        id: 'moon-komider-1',
+        name: 'Lune des Corsaires // Shadow-1',
+        type: 'moon',
+        radius: 65,
+        size: 2.7,
+        speed: 0.009,
+        color: '#71717a',
+        description: 'Lune sombre abritant des hangars de vaisseaux sans pavillon.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-komider-market',
+        name: 'Bazar Noir & Entrepôts Clandestins de Komider',
+        type: 'spaceport',
+        controllingHouse: 'moritani',
+        coordinates: [-22.0, -135.0],
+        securityLevel: 'CONTESTED',
+        description: 'Marché clandestin où se négocient cargaisons d\'Épice illicite et technologies prohibées.',
+        tacticalNotes: 'Risque permanent de raids de douane impériale ou de trahison entre mercenaires.',
+        threatLevel: 'Critique'
+      }
+    ]
+  },
+
+  // 52. KIRANA III - Kirana (Poste de l'Abîme)
+  {
+    id: 'kirana-iii',
+    name: 'Kirana // Kirana III (Poste de l\'Abîme)',
+    starName: 'Kirana',
+    starType: 'Étoile Naine Bleue (B8V)',
+    spectralClass: 'B8V',
+    starColor: '#60a5fa',
+    starRadius: 7.4,
+    primaryPlanet: 'Kirana III (Monde de Glace)',
+    coordinates: [170, -165, -140],
+    controllingHouse: 'guild',
+    strategicImportance: 'Secondaire',
+    distanceFromTerraLy: 310,
+    distanceFromArrakisLy: 420,
+    guildTariffSolaris: 29000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 14,
+    description: 'Poste d\'observation avancé de la Guilde Spatiale surplombant les confins inexplorés de l\'Abîme galactique. Utilisé pour tester les relais d\'ondes supraluminiques et la prescience des Navigateurs novices.',
+    atmosphereColor: '#38bdf8',
+    surfaceTextureType: 'ocean',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 13500,
+      gravityG: 1.05,
+      dayLengthHours: 26.2,
+      yearLengthDays: 440,
+      surfaceTempAvgC: -15,
+      atmosphereComposition: '75% N2, 22% O2, 2% Gaz Rares, 1% Vapeurs d\'Azote',
+      populationTotal: '65 Millions d\'astrogateurs et scientifiques',
+      capitalSettlement: 'Observatoire Suprême de Kirana',
+      primaryExports: ['Cartographies de l\'Espace Profond', 'Données de Prescience Supraluminique', 'Cristaux de Détection']
+    },
+    loreSnippet: 'Au-delà de Kirana III commence le grand vide où même la Guilde n\'ose s\'aventurer sans certitude.',
+    orbitingBodies: [
+      {
+        id: 'moon-kirana-1',
+        name: 'Spire Télépathique de Kirana',
+        type: 'space_station',
+        radius: 65,
+        size: 3.2,
+        speed: 0.007,
+        color: '#60a5fa',
+        description: 'Station d\'amplification du signal psychique des Navigateurs de la Guilde.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-kirana-observatory',
+        name: 'Observatoire de l\'Abîme & Relais Télémétrique de la Guilde',
+        type: 'academy',
+        controllingHouse: 'guild',
+        coordinates: [68.0, -15.0],
+        securityLevel: 'MAXIMAL',
+        description: 'Télescopes à lentilles gravitationnelles sondant les galaxies lointaines et les anomalies spatiales.',
+        tacticalNotes: 'Secrets de navigation de niveau absolu protégés par la Guilde.',
+        threatLevel: 'Faible'
+      }
+    ]
+  },
+
+  // 53. ARBELOUGH - Zeta Herculis (La Porte des Marchands)
+  {
+    id: 'arbelough',
+    name: 'Zeta Herculis // Arbelough',
+    starName: 'Zeta Herculis',
+    starType: 'Système Binaire Sous-géant Jaune (F9IV)',
+    spectralClass: 'F9IV',
+    starColor: '#fef08a',
+    starRadius: 7.8,
+    primaryPlanet: 'Arbelough (Monde Métropole)',
+    coordinates: [125, 160, -80],
+    controllingHouse: 'corrino',
+    strategicImportance: 'Majeur',
+    distanceFromTerraLy: 35.2,
+    distanceFromArrakisLy: 320,
+    guildTariffSolaris: 19000,
+    spiceOutputPerCycle: 0,
+    defenseShieldActive: true,
+    fleetCount: 25,
+    description: 'Ancienne métropole marchande et nœud de transbordement impérial. Ses arcades colossales et ses banques de compensation de la CHOAM brassent des flux continus de marchandises entre les Grandes Maisons.',
+    atmosphereColor: '#fbbf24',
+    surfaceTextureType: 'imperial',
+    moonsCount: 2,
+    planetaryMetrics: {
+      diameterKm: 14200,
+      gravityG: 1.04,
+      dayLengthHours: 24.3,
+      yearLengthDays: 368,
+      surfaceTempAvgC: 22,
+      atmosphereComposition: '78% N2, 21% O2, 0.9% Gaz Nobles, 0.1% Particules Urbaines',
+      populationTotal: '880 Millions de marchands, banquiers et juristes',
+      capitalSettlement: 'Grand Bazar d\'Arbelough',
+      primaryExports: ['Titres de Propriété CHOAM', 'Services Bancaires Impériaux', 'Contrats de Fret', 'Monnaies Régionales']
+    },
+    loreSnippet: 'Tout ce qui s\'achète ou se vend dans l\'Imperium a son prix coté à Arbelough.',
+    orbitingBodies: [
+      {
+        id: 'moon-arbel-1',
+        name: 'Lune Dorée des Banques // Argentum',
+        type: 'moon',
+        radius: 65,
+        size: 3.0,
+        speed: 0.006,
+        color: '#fef08a',
+        description: 'Lune abritant les coffres-forts sous vide et serveurs de compensation de la CHOAM.'
+      }
+    ],
+    tacticalPOIs: [
+      {
+        id: 'poi-arbelough-bazaar',
+        name: 'Grand Hémicycle des Marchands de la CHOAM',
+        type: 'capital',
+        controllingHouse: 'corrino',
+        coordinates: [15.0, 32.0],
+        securityLevel: 'IMPERIAL',
+        description: 'Palais de marbre abritant les salles de négociation des quotas d\'Épice et de denrées planétaires.',
+        tacticalNotes: 'Zone de trêve sacrée garantie par les décrets souverains du Trône du Lion d\'Or.',
+        threatLevel: 'Faible'
+      }
+    ]
   }
 ];
 

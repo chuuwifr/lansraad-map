@@ -27,6 +27,7 @@ interface PlanetsByFactionDropdownProps {
   onSelectSystem: (system: StarSystem) => void;
   onZoomChange?: (level: ZoomLevel) => void;
   onOpenFiefsAtlas?: () => void;
+  onOpenPlanetsDirectory?: () => void;
 }
 
 export const PlanetsByFactionDropdown: React.FC<PlanetsByFactionDropdownProps> = ({
@@ -35,7 +36,8 @@ export const PlanetsByFactionDropdown: React.FC<PlanetsByFactionDropdownProps> =
   houses = HOUSES_DATA,
   onSelectSystem,
   onZoomChange,
-  onOpenFiefsAtlas
+  onOpenFiefsAtlas,
+  onOpenPlanetsDirectory
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -569,15 +571,25 @@ export const PlanetsByFactionDropdown: React.FC<PlanetsByFactionDropdownProps> =
               )}
             </div>
 
-            {/* Dropdown Footer Status */}
-            <div className="p-2.5 bg-[#06080e] border-t border-[#f59e0b]/20 flex items-center justify-between text-[11px] font-mono text-neutral-400 shrink-0">
-              <div className="flex items-center gap-2">
+            {/* Dropdown Footer Status & Directory Link */}
+            <div className="p-2.5 bg-[#06080e] border-t border-[#f59e0b]/20 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-neutral-400 shrink-0">
+              {onOpenPlanetsDirectory && (
+                <button
+                  onClick={() => {
+                    audioSynth.playHoloClick(1600);
+                    setIsOpen(false);
+                    onOpenPlanetsDirectory();
+                  }}
+                  className="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-[#f59e0b]/20 hover:bg-[#f59e0b]/30 text-[#f59e0b] border border-[#f59e0b]/40 font-bold flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>ANNUAIRE COMPLET ({systems.length} MONDES)</span>
+                </button>
+              )}
+              <div className="flex items-center gap-2 text-neutral-400 text-[10px]">
                 <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
-                <span>Landsraad Holonet Sync : ACTIF</span>
+                <span>{filteredGroups.reduce((acc, g) => acc + g.systems.length, 0)} affichés</span>
               </div>
-              <span className="text-[#f59e0b] font-semibold">
-                {filteredGroups.reduce((acc, g) => acc + g.systems.length, 0)} Mondes affichés
-              </span>
             </div>
           </motion.div>
         )}

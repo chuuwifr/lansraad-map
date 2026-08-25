@@ -19,7 +19,9 @@ import {
   RotateCcw,
   Layers,
   ChevronDown,
-  PlusCircle
+  PlusCircle,
+  Database,
+  Clock
 } from 'lucide-react';
 
 interface TopNavigationBarProps {
@@ -31,10 +33,13 @@ interface TopNavigationBarProps {
   onZoomChange: (level: ZoomLevel) => void;
   onSelectSystem: (sys: StarSystem) => void;
   onUpdateConfig: (updater: (prev: MapVisualConfig) => MapVisualConfig) => void;
+  onOpenPlanetsDirectory?: () => void;
   onOpenAstrogation: () => void;
   onOpenFiefsAtlas: () => void;
   onOpenResourceAtlas: () => void;
+  onOpenTimeline: () => void;
   onOpenCreatePlanet: () => void;
+  onOpenBackupRestore: () => void;
   onOpenSettings: () => void;
   onResetView: () => void;
 }
@@ -48,10 +53,13 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   onZoomChange,
   onSelectSystem,
   onUpdateConfig,
+  onOpenPlanetsDirectory,
   onOpenAstrogation,
   onOpenFiefsAtlas,
   onOpenResourceAtlas,
+  onOpenTimeline,
   onOpenCreatePlanet,
+  onOpenBackupRestore,
   onOpenSettings,
   onResetView
 }) => {
@@ -261,17 +269,35 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
       {/* Right Tools & Cartography Modals */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
         
+        {/* All Planets Directory Button */}
+        {onOpenPlanetsDirectory && (
+          <button
+            onClick={() => {
+              audioSynth.playHoloClick(1600);
+              onOpenPlanetsDirectory();
+            }}
+            className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r from-[#f59e0b]/25 to-[#d97706]/20 hover:from-[#f59e0b]/35 hover:to-[#d97706]/30 text-[#fef3c7] border border-[#f59e0b]/60 font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(245,158,11,0.25)] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+            title="Afficher la liste complète et le répertoire de toutes les planètes"
+          >
+            <Globe className="w-4 h-4 text-[#f59e0b]" />
+            <span className="hidden sm:inline">PLANÈTES</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/60 text-[#fbbf24] border border-[#f59e0b]/40 font-mono">
+              {systems.length}
+            </span>
+          </button>
+        )}
+
         {/* Create / Add Custom World Button */}
         <button
           onClick={() => {
             audioSynth.playHoloClick(1600);
             onOpenCreatePlanet();
           }}
-          className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-gradient-to-r from-[#f59e0b]/20 to-[#d97706]/20 hover:from-[#f59e0b]/30 hover:to-[#d97706]/30 text-[#fef3c7] border border-[#f59e0b]/50 font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(245,158,11,0.25)] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+          className="p-2 sm:px-2.5 sm:py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-300 border border-neutral-700 font-mono text-xs font-bold flex items-center gap-1.5 transition-all"
           title="Ajouter une nouvelle planète personnalisée au Landsraad"
         >
           <PlusCircle className="w-4 h-4 text-[#f59e0b]" />
-          <span className="hidden md:inline">+ AJOUTER PLANÈTE</span>
+          <span className="hidden xl:inline">+ NOUVEAU MONDE</span>
         </button>
 
         {/* Astrogation Fold Calculator Button */}
@@ -300,6 +326,19 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
           <span className="hidden sm:inline">FIEFS</span>
         </button>
 
+        {/* Timeline Historical Chronology Button */}
+        <button
+          onClick={() => {
+            audioSynth.playHoloClick(1500);
+            onOpenTimeline();
+          }}
+          className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-amber-950/40 hover:bg-amber-900/60 text-[#fbbf24] border border-amber-600/50 font-mono text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+          title="Chronologie Historique de Dune (Expanded Timeline)"
+        >
+          <Clock className="w-4 h-4" />
+          <span className="hidden md:inline">CHRONOLOGIE</span>
+        </button>
+
         {/* Resources Atlas Button */}
         <button
           onClick={() => {
@@ -311,6 +350,19 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         >
           <Sparkles className="w-4 h-4 text-amber-400" />
           <span className="hidden xl:inline">RESSOURCES</span>
+        </button>
+
+        {/* Backup & Restore Holonet Archives */}
+        <button
+          onClick={() => {
+            audioSynth.playHoloClick(1600);
+            onOpenBackupRestore();
+          }}
+          className="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-600/50 font-mono text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+          title="Sauvegarde, Restauration et Export JSON des Archives Galactiques"
+        >
+          <Database className="w-4 h-4" />
+          <span className="hidden lg:inline">SAUVEGARDE</span>
         </button>
 
         {/* Reset Camera View */}

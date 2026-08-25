@@ -54,6 +54,13 @@ export const ResourceAtlasModal: React.FC<ResourceAtlasModalProps> = ({
           houseId: 'atreides',
           outputDescription: '100% de la production mondiale naturelle via le cycle larvaire de la truite des sables et des vers géants Shai-Hulud.',
           strategicLevel: 'Absolu & Vital'
+        },
+        {
+          systemId: 'komider',
+          systemName: 'Komider',
+          houseId: 'moritani',
+          outputDescription: 'Marchés noirs d\'Épice volée et circuits de contrebande trans-galactiques.',
+          strategicLevel: 'Clandestin'
         }
       ]
     },
@@ -70,12 +77,40 @@ export const ResourceAtlasModal: React.FC<ResourceAtlasModalProps> = ({
           houseId: 'atreides',
           outputDescription: 'Grands bassins de riz Pundi, vignobles de Cala, pêche océanique de masse et réserves d\'eau douce inépuisables.',
           strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'gansireed',
+          systemName: 'Gansireed',
+          houseId: 'corrino',
+          outputDescription: 'Premier grenier à blé de l\'Empire, silos géants de céréales et légumineuses approvisionnant cent mondes de la CHOAM.',
+          strategicLevel: 'Crucial'
+        },
+        {
+          systemId: 'galicia',
+          systemName: 'Galicia',
+          houseId: 'corrino',
+          outputDescription: 'Steppes pastorales de bio-élevage, synth-protéines et approvisionnement en vivres des légions de Sardaukars.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'sikun',
+          systemName: 'Sikun',
+          houseId: 'guild',
+          outputDescription: 'Condensateurs géants atmosphériques et flottes de navires-citernes de la Guilde.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'cedon',
+          systemName: 'Cedon',
+          houseId: 'atreides',
+          outputDescription: 'Vignobles historiques en terrasses et grands crus millésimés du Landsraad.',
+          strategicLevel: 'Prestige'
         }
       ]
     },
     {
       id: 'technology',
-      name: 'Cyber-Mécanique & Miniaturisation (Ix / Richese)',
+      name: 'Cyber-Mécanique, Optique & Logique (Ix / Richese)',
       icon: <Cpu className="w-5 h-5 text-cyan-400" />,
       color: '#06b6d4',
       description: 'Dispositifs mécaniques de haute précision, générateurs de boucliers Holtzman, transmetteurs tachyoniques et no-chambres frôlant les limites du Jihad Butlérien.',
@@ -93,12 +128,26 @@ export const ResourceAtlasModal: React.FC<ResourceAtlasModalProps> = ({
           houseId: 'richese',
           outputDescription: 'Lentilles optiques fines, micro-horlogerie, miroirs solaires d\'amplification.',
           strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'gaar',
+          systemName: 'Gaar',
+          houseId: 'richese',
+          outputDescription: 'Extraction automatisée de minerais magnétiques et noyaux de circuits logiques analogiques.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'alpha-corvus',
+          systemName: 'Alpha Corvus',
+          houseId: 'guild',
+          outputDescription: 'Carrefour de commutation supraluminique de la Guilde et bourses de fret de la CHOAM.',
+          strategicLevel: 'Majeur'
         }
       ]
     },
     {
       id: 'heavy-industry',
-      name: 'Métallurgie Lourde, Fonderies & Armement',
+      name: 'Métallurgie Lourde, Fonderies & Énergie Géothermique',
       icon: <Factory className="w-5 h-5 text-red-500" />,
       color: '#dc2626',
       description: 'Extraction minière de surface, alliages d\'obsidienne, usines de blindage lourd et production industrielle de masse pour les armées du Landsraad.',
@@ -108,6 +157,20 @@ export const ResourceAtlasModal: React.FC<ResourceAtlasModalProps> = ({
           systemName: 'Giedi Prime',
           houseId: 'harkonnen',
           outputDescription: 'Fosses minières à esclaves, forges d\'acier noir, blindages thermo-cinétiques et usines d\'armement lourd.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'crompton',
+          systemName: 'Crompton',
+          houseId: 'richese',
+          outputDescription: 'Fonderies géantes à haute température, lingots de titane spatial et alliages ultra-denses.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'atar',
+          systemName: 'Atar',
+          houseId: 'harkonnen',
+          outputDescription: 'Centrales géothermiques primales, puits de magma et raffinage massif d\'obsidienne.',
           strategicLevel: 'Majeur'
         },
         {
@@ -121,33 +184,47 @@ export const ResourceAtlasModal: React.FC<ResourceAtlasModalProps> = ({
     },
     {
       id: 'biology',
-      name: 'Biotechnologie & Botanique Rare (Tleilax / Ecaz)',
+      name: 'Biotechnologie, Sylviculture & Botanique Rare',
       icon: <Trees className="w-5 h-5 text-purple-400" />,
       color: '#a855f7',
-      description: 'Sculptures de bois vivant Fogwood, narcotiques de combat Semuta, jus de Sapho stimulant pour Mentats et synthèse cellulaire en cuves.',
+      description: 'Sculptures de bois vivant Fogwood, narcotiques de combat Semuta, bois de fer millénaires et cuves de clonage génétique.',
       primaryWorlds: [
         {
-          systemId: 'ecaz-system',
+          systemId: 'ecaz',
           systemName: 'Ecaz',
           houseId: 'ecaz',
           outputDescription: 'Bosquets vivants de Fogwood, extraction du narcotique Semuta et de la drogue de Sapho pour Mentats.',
           strategicLevel: 'Prestige & Rareté'
         },
         {
-          systemId: 'tleilax-prime',
-          systemName: 'Tleilax Prime',
+          systemId: 'tleilax',
+          systemName: 'Tleilax',
           houseId: 'tleilax',
           outputDescription: 'Cuves Axlotl de clonage génétique, Gholas, Danseurs-Visages et prothèses cyber-organiques.',
           strategicLevel: 'Crucial & Secret'
+        },
+        {
+          systemId: 'dendros',
+          systemName: 'Dendros',
+          houseId: 'corrino',
+          outputDescription: 'Forêts colossales d\'arbres kilomètres, bois de fer impérial et résines aromatiques de luxe.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'lernaeus',
+          systemName: 'Lernaeus',
+          houseId: 'ecaz',
+          outputDescription: 'Archipels coralliens produisant les pigments bio-luminescents et élixirs marins précieux.',
+          strategicLevel: 'Majeur'
         }
       ]
     },
     {
       id: 'military',
-      name: 'Écoles Militaires & Régiments d\'Élite',
+      name: 'Écoles Militaires, Bastions & Retraites d\'Élite',
       icon: <ShieldCheck className="w-5 h-5 text-emerald-400" />,
       color: '#10b981',
-      description: 'Académies martiales et mondes d\'entraînement réputés pour façonner les guerriers les plus redoutables de l\'univers.',
+      description: 'Académies martiales, forteresses souterraines et mondes d\'entraînement réputés pour façonner les guerriers les plus redoutables de l\'univers.',
       primaryWorlds: [
         {
           systemId: 'salusa-secundus',
@@ -157,10 +234,31 @@ export const ResourceAtlasModal: React.FC<ResourceAtlasModalProps> = ({
           strategicLevel: 'Crucial'
         },
         {
+          systemId: 'dur',
+          systemName: 'Dur',
+          houseId: 'corrino',
+          outputDescription: 'Citadelle cuirassée souterraine et garnisons des Forces de Dur.',
+          strategicLevel: 'Majeur'
+        },
+        {
           systemId: 'ginaz',
           systemName: 'Ginaz',
           houseId: 'ginaz',
           outputDescription: 'Académie des Dix Niveaux formant les Maîtres d\'Armes et instructeurs d\'escrime.',
+          strategicLevel: 'Majeur'
+        },
+        {
+          systemId: 'walgis',
+          systemName: 'Walgis',
+          houseId: 'ginaz',
+          outputDescription: 'Arènes sous tempêtes hyper-cycloniques pour l\'entraînement en milieu hostile.',
+          strategicLevel: 'Secondaire'
+        },
+        {
+          systemId: 'al-dhanab',
+          systemName: 'Al Dhanab',
+          houseId: 'bene_gesserit',
+          outputDescription: 'Labyrinthe d\'épreuves et de conditionnement prana-bindu pour les postulantes Bene Gesserit.',
           strategicLevel: 'Majeur'
         }
       ]

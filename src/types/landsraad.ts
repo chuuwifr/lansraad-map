@@ -109,7 +109,7 @@ export interface SystemStar {
 export interface OrbitingBody {
   id: string;
   name: string;
-  type: 'moon' | 'heighliner_dock' | 'orbital_refinery' | 'space_station';
+  type: 'moon' | 'heighliner_dock' | 'orbital_refinery' | 'space_station' | 'defense_fortress';
   radius: number; // distance from planet
   size: number;
   speed: number;
@@ -222,4 +222,49 @@ export interface MapVisualConfig {
   surfaceBumpStrength: number;
   oceanSpecularStrength: number;
   planetRotationSpeed: number;
+}
+
+export type TimelineEraId = 
+  | 'pre-guild' 
+  | 'jihad' 
+  | 'imperium-foundation' 
+  | 'schools-choam' 
+  | 'prelude-dune' 
+  | 'muaddib-ascendance' 
+  | 'god-emperor' 
+  | 'scattering';
+
+export interface TimelineEra {
+  id: TimelineEraId;
+  name: string;
+  periodDisplay: string;
+  yearRange: [number, number];
+  summary: string;
+  badgeColor: string;
+  accentColor: string;
+  iconName: string;
+}
+
+export interface TimelineEvent {
+  id: string;
+  year: number; // Negative for B.G. (Before Guild), Positive for A.G. (After Guild)
+  era: TimelineEraId;
+  dateDisplay: string;
+  earthYearEquivalent?: string;
+  title: string;
+  subtitle?: string;
+  category: 'war' | 'political' | 'religious' | 'scientific' | 'discovery' | 'crisis' | 'dynasty';
+  faction: string;
+  factionName: string;
+  factionColor: string;
+  description: string;
+  impact: string;
+  keyFigures: string[];
+  relatedSystemId?: string; // StarSystem ID to warp to in 3D
+  relatedPlanetName?: string;
+  quote?: {
+    text: string;
+    author: string;
+  };
+  significanceLevel: 'critical' | 'major' | 'notable';
 }

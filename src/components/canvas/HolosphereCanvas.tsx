@@ -64,12 +64,33 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
   const atmosphereMeshRef = useRef<THREE.Mesh | null>(null);
   const poiPinsGroupRef = useRef<THREE.Group>(new THREE.Group());
 
-  // Dynamic references for animated rotating textured planets in Galactic and System views
-  const galacticPlanetsRef = useRef<{
-    mesh: THREE.Mesh;
-    cloudsMesh?: THREE.Mesh | null;
-    rotSpeed: number;
+  // Dynamic references for animated rotating planetary systems in Galactic view
+  const galacticSystemsRef = useRef<{
+    systemContainer: THREE.Group;
     system: StarSystem;
+    starMesh: THREE.Mesh;
+    starCorona?: THREE.Mesh | null;
+    secondaryStarMesh?: THREE.Mesh | null;
+    secondaryStarOrbitRadius?: number;
+    secondaryStarOrbitSpeed?: number;
+    secondaryStarAngle?: number;
+    planets: {
+      container: THREE.Group;
+      mesh: THREE.Mesh;
+      cloudsMesh?: THREE.Mesh | null;
+      ringMesh?: THREE.Mesh | null;
+      orbitRadius: number;
+      orbitSpeed: number;
+      angle: number;
+      rotSpeed: number;
+      isPrimary: boolean;
+      moons?: {
+        mesh: THREE.Mesh;
+        orbitRadius: number;
+        orbitSpeed: number;
+        angle: number;
+      }[];
+    }[];
   }[]>([]);
 
   // Animated Stars in System view (supports single & binary star systems)
@@ -319,7 +340,7 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
     }
     interactiveObjectsRef.current = [];
     routePulsePointsRef.current = [];
-    galacticPlanetsRef.current = [];
+    galacticSystemsRef.current = [];
 
     // Filter systems based on active filter
     let visibleSystems = systems;
@@ -335,102 +356,293 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
       const house = HOUSES_DATA[sys.controllingHouse] || HOUSES_DATA.corrino;
       const isCurrentSelected = sys.id === selectedSystem.id;
       const starColor = new THREE.Color(sys.starColor || house.color);
+      const { stars, planets } = getSystemPlanetsAndStars(sys);
+      const isBinary = stars.length > 1;
 
       // System container root node
       const systemContainer = new THREE.Group();
       systemContainer.position.set(sys.coordinates[0], sys.coordinates[1], sys.coordinates[2]);
       systemContainer.userData = { type: 'star', system: sys };
 
-      // 1. Generate Authentic Planet Texture Maps (Custom or Procedural Biome)
-      const maps = PlanetTextureGenerator.generateMaps(sys);
+      // Inclined Ecliptic Group giving a realistic tactical 3D planetary system perspective
+      const eclipticGroup = new THREE.Group();
+      eclipticGroup.rotation.x = 0.36;
+      eclipticGroup.rotation.z = -0.12;
+      systemContainer.add(eclipticGroup);
 
-      // Size of the textured planet sphere in Galaxy view
-      const planetRadius = sys.isCustom ? 7.2 : (sys.strategicImportance === 'Crucial' ? 8.2 : 6.4);
-      const planetGeo = new THREE.SphereGeometry(planetRadius, 32, 32);
-
-      const planetMat = new THREE.MeshStandardMaterial({
-        map: maps.diffuseMap,
-        bumpMap: maps.bumpMap,
-        bumpScale: 1.0,
-        roughness: sys.surfaceTextureType === 'ocean' ? 0.4 : 0.72,
-        metalness: sys.surfaceTextureType === 'synthetic' ? 0.45 : 0.06,
-        emissiveMap: maps.nightLightsMap,
-        emissive: new THREE.Color(0xffffff),
-        emissiveIntensity: isCurrentSelected ? 0.9 : 0.45
+      // 1. Central Host Star / Sun (Étoile Centrale)
+      const primaryStarRadius = sys.strategicImportance === 'Crucial' ? 3.8 : (sys.isCustom ? 3.4 : 3.0);
+      const starGeo = new THREE.SphereGeometry(primaryStarRadius, 24, 24);
+      const starMat = new THREE.MeshStandardMaterial({
+        color: starColor,
+        emissive: starColor,
+        emissiveIntensity: isCurrentSelected ? 2.5 : 1.7,
+        roughness: 0.12
       });
+      const starMesh = new THREE.Mesh(starGeo, starMat);
+      starMesh.userData = { type: 'star', system: sys, isSun: true };
+      eclipticGroup.add(starMesh);
+      interactiveObjectsRef.current.push(starMesh);
 
-      const planetMesh = new THREE.Mesh(planetGeo, planetMat);
-      systemContainer.add(planetMesh);
-
-      // 2. Mini Dynamic Cloud Sphere (If applicable)
-      let miniCloudMesh: THREE.Mesh | null = null;
-      const cloudDensity = sys.cloudDensity ?? 0.65;
-      if (sys.surfaceTextureType !== 'gas_giant' && cloudDensity > 0.1) {
-        const cloudGeo = new THREE.SphereGeometry(planetRadius * 1.02, 28, 28);
-        const cloudMat = new THREE.MeshStandardMaterial({
-          map: maps.cloudMap,
-          transparent: true,
-          opacity: cloudDensity * 0.85,
-          roughness: 0.9,
-          depthWrite: false
-        });
-        miniCloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
-        systemContainer.add(miniCloudMesh);
-      }
-
-      // 3. Mini Planetary Rings (For Gas Giants or ringed worlds)
-      if (sys.hasRings || sys.surfaceTextureType === 'gas_giant') {
-        const ringGeo = new THREE.RingGeometry(planetRadius * 1.35, planetRadius * 2.25, 36);
-        const ringMat = new THREE.MeshStandardMaterial({
-          map: maps.ringMap || maps.diffuseMap,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.85,
-          roughness: 0.85
-        });
-        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-        ringMesh.rotation.x = Math.PI / 2 + 0.35;
-        systemContainer.add(ringMesh);
-      }
-
-      // 4. Atmospheric Scattering Glow Halo
-      const atmoGeo = new THREE.SphereGeometry(planetRadius * 1.15, 24, 24);
-      const atmoMat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(sys.atmosphereColor),
-        transparent: true,
-        opacity: isCurrentSelected ? 0.38 : 0.24,
-        side: THREE.BackSide
-      });
-      const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
-      systemContainer.add(atmoMesh);
-
-      // 5. Star Stellar Radiation Corona Ring
-      const coronaGeo = new THREE.RingGeometry(planetRadius * 1.35, planetRadius * 1.7, 32);
+      // Star Stellar Corona Ring
+      const coronaGeo = new THREE.RingGeometry(primaryStarRadius * 1.25, primaryStarRadius * 2.2, 32);
       const coronaMat = new THREE.MeshBasicMaterial({
         color: starColor,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: isCurrentSelected ? 0.85 : 0.35
+        opacity: isCurrentSelected ? 0.75 : 0.38
       });
-      const coronaMesh = new THREE.Mesh(coronaGeo, coronaMat);
-      coronaMesh.rotation.x = Math.PI / 2;
-      systemContainer.add(coronaMesh);
+      const starCorona = new THREE.Mesh(coronaGeo, coronaMat);
+      starCorona.rotation.x = Math.PI / 2;
+      starMesh.add(starCorona);
 
-      // 6. Selection Marker Beacon
+      // Star Atmosphere Radiant Glow Aura
+      const starAuraGeo = new THREE.SphereGeometry(primaryStarRadius * 1.45, 18, 18);
+      const starAuraMat = new THREE.MeshBasicMaterial({
+        color: starColor,
+        transparent: true,
+        opacity: isCurrentSelected ? 0.32 : 0.18,
+        side: THREE.BackSide
+      });
+      const starAura = new THREE.Mesh(starAuraGeo, starAuraMat);
+      starMesh.add(starAura);
+
+      // Binary companion star if present (e.g. Poritrin, Ix)
+      let secondaryStarMesh: THREE.Mesh | null = null;
+      let secondaryStarOrbitRadius = 0;
+      let secondaryStarOrbitSpeed = 0;
+      let secondaryStarAngle = 0;
+
+      if (isBinary) {
+        const companionData = stars[1];
+        const compColor = new THREE.Color(companionData.color || '#fef08a');
+        const compRadius = primaryStarRadius * 0.55;
+        const compGeo = new THREE.SphereGeometry(compRadius, 16, 16);
+        const compMat = new THREE.MeshStandardMaterial({
+          color: compColor,
+          emissive: compColor,
+          emissiveIntensity: 1.8,
+          roughness: 0.15
+        });
+        secondaryStarMesh = new THREE.Mesh(compGeo, compMat);
+        secondaryStarOrbitRadius = primaryStarRadius * 1.85;
+        secondaryStarOrbitSpeed = 0.008;
+        secondaryStarAngle = Math.PI;
+        secondaryStarMesh.position.set(Math.cos(secondaryStarAngle) * secondaryStarOrbitRadius, 0, Math.sin(secondaryStarAngle) * secondaryStarOrbitRadius);
+        secondaryStarMesh.userData = { type: 'star', system: sys, isSun: true };
+        eclipticGroup.add(secondaryStarMesh);
+        interactiveObjectsRef.current.push(secondaryStarMesh);
+      }
+
+      // 2. Concentric Planetary Orbits & Sequential Orbiting Worlds
+      const orbitCount = planets.length;
+      const baseOrbitRadius = primaryStarRadius + 4.5;
+      const orbitStep = 4.6;
+      const maxOrbitRadius = baseOrbitRadius + ((orbitCount - 1) * orbitStep);
+
+      // System Ecliptic Disc / Habitable Zone Disc
+      const eclipticDiscGeo = new THREE.RingGeometry(primaryStarRadius * 1.15, maxOrbitRadius + 3.0, 36);
+      const eclipticDiscMat = new THREE.MeshBasicMaterial({
+        color: starColor,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: isCurrentSelected ? 0.12 : 0.04
+      });
+      const eclipticDisc = new THREE.Mesh(eclipticDiscGeo, eclipticDiscMat);
+      eclipticDisc.rotation.x = Math.PI / 2;
+      eclipticGroup.add(eclipticDisc);
+
+      const animatedPlanetsList: {
+        container: THREE.Group;
+        mesh: THREE.Mesh;
+        cloudsMesh?: THREE.Mesh | null;
+        ringMesh?: THREE.Mesh | null;
+        orbitRadius: number;
+        orbitSpeed: number;
+        angle: number;
+        rotSpeed: number;
+        isPrimary: boolean;
+        moons?: {
+          mesh: THREE.Mesh;
+          orbitRadius: number;
+          orbitSpeed: number;
+          angle: number;
+        }[];
+      }[] = [];
+
+      planets.forEach((p, pIdx) => {
+        const pOrbitRadius = baseOrbitRadius + (pIdx * orbitStep);
+        const isPrimaryPlanet = p.isPrimary;
+
+        // Orbit Track Line in Ecliptic Plane
+        const orbitPathGeo = new THREE.BufferGeometry();
+        const pts: number[] = [];
+        const segments = 48;
+        for (let j = 0; j <= segments; j++) {
+          const a = (j / segments) * Math.PI * 2;
+          pts.push(Math.cos(a) * pOrbitRadius, 0, Math.sin(a) * pOrbitRadius);
+        }
+        orbitPathGeo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+        const orbitMat = new THREE.LineBasicMaterial({
+          color: isPrimaryPlanet ? 0xf59e0b : starColor,
+          transparent: true,
+          opacity: isPrimaryPlanet ? (isCurrentSelected ? 0.65 : 0.42) : (isCurrentSelected ? 0.32 : 0.16)
+        });
+        const orbitLine = new THREE.Line(orbitPathGeo, orbitMat);
+        eclipticGroup.add(orbitLine);
+
+        // Planet Container
+        const pContainer = new THREE.Group();
+        const initialAngle = (pIdx * (Math.PI * 2 / Math.max(1, orbitCount))) + ((sys.coordinates[0] * 0.1) % (Math.PI * 2));
+        pContainer.position.set(Math.cos(initialAngle) * pOrbitRadius, 0, Math.sin(initialAngle) * pOrbitRadius);
+        pContainer.userData = { type: 'star', system: sys, isPlanet: true, planetData: p };
+        eclipticGroup.add(pContainer);
+        interactiveObjectsRef.current.push(pContainer);
+
+        // Planet Mesh & Procedural / Canonical Surface
+        let pMesh: THREE.Mesh;
+        let pCloudsMesh: THREE.Mesh | null = null;
+        let pRingMesh: THREE.Mesh | null = null;
+        const pMoons: { mesh: THREE.Mesh; orbitRadius: number; orbitSpeed: number; angle: number }[] = [];
+
+        if (isPrimaryPlanet) {
+          // Primary Capital World (Arrakis, Caladan, Kaitain, Giedi Prime...)
+          const maps = PlanetTextureGenerator.generateMaps(sys);
+          const pSize = sys.isCustom ? 2.7 : (sys.strategicImportance === 'Crucial' ? 3.1 : 2.5);
+          const pGeo = new THREE.SphereGeometry(pSize, 28, 28);
+          const isWater = sys.surfaceTextureType === 'ocean' || sys.surfaceTextureType === 'imperial';
+          const pMat = new THREE.MeshStandardMaterial({
+            map: maps.diffuseMap,
+            bumpMap: maps.bumpMap,
+            bumpScale: 0.8,
+            roughness: isWater ? 0.45 : 0.72,
+            metalness: sys.surfaceTextureType === 'synthetic' ? 0.4 : 0.05,
+            emissiveMap: maps.nightLightsMap,
+            emissive: new THREE.Color(0xffffff),
+            emissiveIntensity: isCurrentSelected ? 0.85 : 0.4
+          });
+          pMesh = new THREE.Mesh(pGeo, pMat);
+          pMesh.userData = { type: 'star', system: sys, isPlanet: true };
+          pContainer.add(pMesh);
+          interactiveObjectsRef.current.push(pMesh);
+
+          // Dynamic Cloud Layer on Primary Planet
+          const cloudDensity = sys.cloudDensity ?? 0.6;
+          if (sys.surfaceTextureType !== 'gas_giant' && cloudDensity > 0.1) {
+            const cloudGeo = new THREE.SphereGeometry(pSize * 1.025, 24, 24);
+            const cloudMat = new THREE.MeshStandardMaterial({
+              map: maps.cloudMap,
+              transparent: true,
+              opacity: cloudDensity * 0.8,
+              roughness: 0.9,
+              depthWrite: false
+            });
+            pCloudsMesh = new THREE.Mesh(cloudGeo, cloudMat);
+            pContainer.add(pCloudsMesh);
+          }
+
+          // Atmosphere scattering halo on Primary Planet
+          const atmoGeo = new THREE.SphereGeometry(pSize * 1.16, 20, 20);
+          const atmoMat = new THREE.MeshBasicMaterial({
+            color: new THREE.Color(sys.atmosphereColor),
+            transparent: true,
+            opacity: isCurrentSelected ? 0.38 : 0.22,
+            side: THREE.BackSide
+          });
+          const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+          pContainer.add(atmoMesh);
+
+          // Primary World Target Reticle Ring
+          const reticleGeo = new THREE.RingGeometry(pSize * 1.35, pSize * 1.6, 24);
+          const reticleMat = new THREE.MeshBasicMaterial({
+            color: 0xf59e0b,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: isCurrentSelected ? 0.85 : 0.45
+          });
+          const reticleMesh = new THREE.Mesh(reticleGeo, reticleMat);
+          reticleMesh.rotation.x = Math.PI / 2;
+          pContainer.add(reticleMesh);
+
+          // Miniature Moon for Primary World
+          if (p.moons && p.moons.length > 0) {
+            const moonData = p.moons[0];
+            const moonGeo = new THREE.SphereGeometry(0.65, 12, 12);
+            const moonMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(moonData.color || '#d4d4d8') });
+            const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+            const moonOrbitR = pSize * 1.85;
+            moonMesh.position.set(moonOrbitR, 0, 0);
+            pContainer.add(moonMesh);
+            pMoons.push({
+              mesh: moonMesh,
+              orbitRadius: moonOrbitR,
+              orbitSpeed: 0.03,
+              angle: 0
+            });
+          }
+        } else {
+          // Other system planets (Inner fiery/rocky, Gas Giant, Outer icy)
+          const isGas = p.surfaceTextureType === 'gas_giant' || p.hasRings;
+          const pSize = isGas ? 2.2 : (p.size ? Math.min(2.0, Math.max(1.1, p.size * 0.16)) : 1.3);
+          const pGeo = new THREE.SphereGeometry(pSize, 20, 20);
+          const pColor = new THREE.Color(p.color || '#94a3b8');
+          const pMat = new THREE.MeshStandardMaterial({
+            color: pColor,
+            roughness: 0.65,
+            metalness: 0.1
+          });
+          pMesh = new THREE.Mesh(pGeo, pMat);
+          pMesh.userData = { type: 'star', system: sys, isPlanet: true };
+          pContainer.add(pMesh);
+          interactiveObjectsRef.current.push(pMesh);
+
+          // Gas giant planetary rings
+          if (isGas) {
+            const ringGeo = new THREE.RingGeometry(pSize * 1.35, pSize * 2.2, 28);
+            const ringMat = new THREE.MeshBasicMaterial({
+              color: new THREE.Color(p.ringColor || p.color || '#38bdf8'),
+              side: THREE.DoubleSide,
+              transparent: true,
+              opacity: 0.65
+            });
+            pRingMesh = new THREE.Mesh(ringGeo, ringMat);
+            pRingMesh.rotation.x = Math.PI / 2 + 0.3;
+            pContainer.add(pRingMesh);
+          }
+        }
+
+        // Calculate planetary orbit speed (inner planets orbit faster)
+        const orbitSpeed = (0.010 / Math.sqrt(pIdx + 1)) * 0.7;
+
+        animatedPlanetsList.push({
+          container: pContainer,
+          mesh: pMesh,
+          cloudsMesh: pCloudsMesh,
+          ringMesh: pRingMesh,
+          orbitRadius: pOrbitRadius,
+          orbitSpeed: orbitSpeed,
+          angle: initialAngle,
+          rotSpeed: 0.005 + (Math.abs(sys.coordinates[1] % 3) * 0.001),
+          isPrimary: isPrimaryPlanet,
+          moons: pMoons
+        });
+      });
+
+      // Selection Beacon Ring for the whole system
       if (isCurrentSelected) {
-        const selRingGeo = new THREE.RingGeometry(planetRadius * 1.9, planetRadius * 2.2, 36);
-        const selRingMat = new THREE.MeshBasicMaterial({
+        const selSysRingGeo = new THREE.RingGeometry(maxOrbitRadius + 3.8, maxOrbitRadius + 5.2, 48);
+        const selSysRingMat = new THREE.MeshBasicMaterial({
           color: 0xf59e0b,
           side: THREE.DoubleSide,
           transparent: true,
           opacity: 0.85
         });
-        const selRing = new THREE.Mesh(selRingGeo, selRingMat);
-        selRing.rotation.x = Math.PI / 2;
-        systemContainer.add(selRing);
+        const selSysRing = new THREE.Mesh(selSysRingGeo, selSysRingMat);
+        selSysRing.rotation.x = Math.PI / 2;
+        eclipticGroup.add(selSysRing);
       }
 
-      // 7. Vertical Starlight Tactical Beacon to grid plane
+      // Vertical Starlight Tactical Beacon to grid plane
       const beaconGeo = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(0, -70 - sys.coordinates[1], 0)
@@ -446,7 +658,7 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
       beaconLine.computeLineDistances();
       systemContainer.add(beaconLine);
 
-      // 8. Base footprint ring on grid floor
+      // Base footprint ring on grid floor
       const baseRingGeo = new THREE.RingGeometry(3.5, 5.2, 16);
       const baseRingMat = new THREE.MeshBasicMaterial({
         color: starColor,
@@ -462,11 +674,16 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
       galacticGroup.add(systemContainer);
       interactiveObjectsRef.current.push(systemContainer);
 
-      galacticPlanetsRef.current.push({
-        mesh: planetMesh,
-        cloudsMesh: miniCloudMesh,
-        rotSpeed: 0.003 + (Math.abs(sys.coordinates[0] % 5) * 0.0008),
-        system: sys
+      galacticSystemsRef.current.push({
+        systemContainer: systemContainer,
+        system: sys,
+        starMesh: starMesh,
+        starCorona: starCorona,
+        secondaryStarMesh: secondaryStarMesh,
+        secondaryStarOrbitRadius: secondaryStarOrbitRadius,
+        secondaryStarOrbitSpeed: secondaryStarOrbitSpeed,
+        secondaryStarAngle: secondaryStarAngle,
+        planets: animatedPlanetsList
       });
     });
 
@@ -1072,13 +1289,41 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
         item.pulseMesh.position.copy(pos);
       });
 
-      // Animate all textured planets in Galactic View
+      // Animate all multi-body planetary systems in Galactic View
       if (zoomLevel === 'galactic') {
-        galacticPlanetsRef.current.forEach((item) => {
-          item.mesh.rotation.y += item.rotSpeed;
-          if (item.cloudsMesh) {
-            item.cloudsMesh.rotation.y += item.rotSpeed * 1.35;
+        galacticSystemsRef.current.forEach((sysObj) => {
+          // Central Star Corona pulse and gentle rotation
+          if (sysObj.starCorona) {
+            sysObj.starCorona.rotation.z += 0.0025;
           }
+
+          // Binary companion star orbit revolution
+          if (sysObj.secondaryStarMesh && sysObj.secondaryStarOrbitRadius && sysObj.secondaryStarOrbitSpeed) {
+            sysObj.secondaryStarAngle = (sysObj.secondaryStarAngle || 0) + sysObj.secondaryStarOrbitSpeed;
+            sysObj.secondaryStarMesh.position.x = Math.cos(sysObj.secondaryStarAngle) * sysObj.secondaryStarOrbitRadius;
+            sysObj.secondaryStarMesh.position.z = Math.sin(sysObj.secondaryStarAngle) * sysObj.secondaryStarOrbitRadius;
+          }
+
+          // Animate each orbiting planet in the planetary system
+          sysObj.planets.forEach((pObj) => {
+            pObj.angle += pObj.orbitSpeed;
+            pObj.container.position.x = Math.cos(pObj.angle) * pObj.orbitRadius;
+            pObj.container.position.z = Math.sin(pObj.angle) * pObj.orbitRadius;
+            pObj.mesh.rotation.y += pObj.rotSpeed;
+
+            if (pObj.cloudsMesh) {
+              pObj.cloudsMesh.rotation.y += pObj.rotSpeed * 1.35;
+            }
+
+            // Animate planet moons orbiting their parent world
+            if (pObj.moons) {
+              pObj.moons.forEach((mObj) => {
+                mObj.angle += mObj.orbitSpeed;
+                mObj.mesh.position.x = Math.cos(mObj.angle) * mObj.orbitRadius;
+                mObj.mesh.position.z = Math.sin(mObj.angle) * mObj.orbitRadius;
+              });
+            }
+          });
         });
       }
 
