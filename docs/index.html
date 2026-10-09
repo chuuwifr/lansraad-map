@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>LANDSRAAD // Cartographie Holosphérique 3D</title>
+    <meta name="description" content="Système de cartographie holographique 3D et tableau de bord tactique du Haut Conseil du Landsraad dans l'univers de Dune." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0a0b0e" />
+    <meta property="og:title" content="LANDSRAAD // Cartographie Holosphérique 3D" />
+    <meta property="og:description" content="Système de cartographie holographique 3D et tableau de bord tactique du Haut Conseil du Landsraad dans l'univers de Dune." />
+    <meta property="og:type" content="website" />
+    <script>
+      (function() {
+        // Détection de l'hébergement statique GitHub Pages non-compilé
+        window.addEventListener('DOMContentLoaded', function() {
+          var uncompiledScript = document.querySelector('script[src*="main.tsx"]');
+          var isGithubPages = window.location.hostname.endsWith('github.io');
+          if (uncompiledScript && isGithubPages) {
+            var segments = window.location.pathname.split('/').filter(Boolean);
+            var repo = segments.length > 0 ? '/' + segments[0] : '';
+            var target = repo + '/docs/' + window.location.search + window.location.hash;
+            console.warn('[Landsraad] Hébergement GitHub Pages racine non-compilé détecté. Redirection vers /docs/ :', target);
+            window.location.replace(target);
+          }
+        });
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-DBc3o6Vr.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Bi5Sc6Ol.css">
+  </head>
+  <body class="bg-[#060709] text-[#e6d5b8] antialiased overflow-hidden select-none">
+    <div id="root">
+      <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#060709;color:#f59e0b;font-family:'Rajdhani',monospace,sans-serif;text-align:center;padding:24px;box-sizing:border-box;">
+        <div style="width:52px;height:52px;margin-bottom:20px;border:3px solid rgba(245,158,11,0.2);border-top:3px solid #f59e0b;border-radius:50%;animation:holonet-spin 1s linear infinite;"></div>
+        <div style="font-size:20px;font-weight:700;letter-spacing:0.2em;color:#f59e0b;margin-bottom:8px;">LANDSRAAD // CARTOGRAPHIE HOLOSPHÉRIQUE</div>
+        <div style="font-size:13px;letter-spacing:0.08em;color:#a3a3a3;max-width:440px;line-height:1.5;">Initialisation du protocole de navigation 3D et des registres impériaux...</div>
+        <style>@keyframes holonet-spin { to { transform: rotate(360deg); } }</style>
+      </div>
+    </div>
+  </body>
+</html>
+

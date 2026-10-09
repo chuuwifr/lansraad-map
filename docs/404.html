@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>LANDSRAAD // Redirection Holosphérique</title>
+    <script>
+      (function() {
+        var path = window.location.pathname;
+        var parts = path.split('/').filter(Boolean);
+        var isGithubIo = window.location.hostname.endsWith('github.io');
+        var basePath = '/';
+        if (isGithubIo && parts.length > 0) {
+          basePath = '/' + parts[0] + '/';
+          if (parts.length > 1 && parts[1] === 'docs') {
+            basePath += 'docs/';
+          }
+        }
+        window.location.replace(basePath + window.location.search + window.location.hash);
+      })();
+    </script>
+  </head>
+  <body style="background:#060709;color:#f59e0b;font-family:monospace;padding:2rem;text-align:center;">
+    <p>Redirection vers la cartographie tactique du Landsraad...</p>
+  </body>
+</html>

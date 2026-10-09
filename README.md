@@ -1,53 +1,66 @@
 # LANDSRAAD // Cartographie Holosphérique 3D
 
-Application interactive de navigation stellaire 3D et tableau de bord tactique du Haut Conseil du Landsraad dans l'univers de Dune (Three.js, React, Tailwind CSS).
+Application interactive de cartographie stellaire 3D et tableau de bord tactique du Haut Conseil du Landsraad dans l'univers de Dune (Three.js, React, Tailwind CSS).
 
 ---
 
-## 🚀 Déploiement sur GitHub Pages (Sans page blanche)
+## 🚀 Guide de Déploiement sur GitHub Pages (Résolution de la page blanche)
 
-Pour héberger ce projet sur GitHub Pages sans rencontrer le problème d'écran blanc, deux options simples sont configurées :
+Si vous avez rencontré un écran blanc sur GitHub Pages, voici la configuration prête à l'emploi. Vous avez le choix entre **3 méthodes** simples :
 
-### Option 1 : Déploiement automatique via GitHub Actions (Recommandé)
-Le fichier de workflow `.github/workflows/deploy.yml` est déjà inclus dans le dépôt.
+### Méthode 1 : Déploiement instantané depuis le dossier `/docs` (Recommandé & Le plus rapide)
 
-1. Poussez votre code sur votre dépôt GitHub (`main` ou `master`).
-2. Sur GitHub, rendez-vous dans l'onglet **Settings** > **Pages**.
-3. Dans la section **Build and deployment** :
-   - Sous **Source**, choisissez **GitHub Actions**.
-4. GitHub va automatiquement compiler le projet (`npm run build`) et déployer le dossier `dist/` sur `https://<nom-utilisateur>.github.io/<nom-du-repo>/`.
+Le dossier `/docs` contient déjà l'application entièrement pré-compilée et prête pour GitHub Pages :
+
+1. Poussez votre code sur GitHub :
+   ```bash
+   git add .
+   git commit -m "Déploiement Landsraad"
+   git push origin main
+   ```
+2. Sur votre dépôt GitHub, allez dans **Settings** > **Pages** (dans le menu de gauche).
+3. Sous **Build and deployment** :
+   * **Source** : laissez `Deploy from a branch`
+   * **Branch** : sélectionnez `main` (ou `master`)
+   * **Folder** : sélectionnez `/docs` *(important ! Ne laissez pas `/ (root)` car la racine contient les sources non compilées)*
+4. Cliquez sur **Save**.
+5. Votre application sera accessible sans page blanche sur : `https://<votre-pseudo>.github.io/<votre-depot>/`
+
+*(Remarque : Même si vous laissez par erreur `/ (root)`, un script de redirection automatique détecte GitHub Pages et renvoie automatiquement vers `/docs/` avec écran de chargement holographique).*
 
 ---
 
-### Option 2 : Déploiement en une commande avec `gh-pages`
-Si vous préférez déployer manuellement depuis votre machine :
+### Méthode 2 : Déploiement automatique via GitHub Actions
+
+Le workflow automatisé `.github/workflows/deploy.yml` est déjà configuré à la racine du dépôt :
+
+1. Sur votre dépôt GitHub, allez dans **Settings** > **Pages**.
+2. Sous **Build and deployment** :
+   * **Source** : sélectionnez **GitHub Actions**
+3. À chaque `git push` sur `main`, GitHub exécutera automatiquement le build et publiera le site en production.
+
+---
+
+### Méthode 3 : Déploiement direct via la commande `npm run deploy`
+
+Un script `gh-pages` est intégré :
 
 ```bash
-# Installe les dépendances si ce n'est pas déjà fait
-npm install
-
-# Compile et publie directement sur la branche gh-pages de votre dépôt GitHub
 npm run deploy
 ```
-
-Ensuite, dans **Settings** > **Pages**, vérifiez que la source est bien configurée sur la branche `gh-pages` / `root`.
-
----
-
-## 🛠️ Corrections apportées pour éliminer l'écran blanc sur GitHub
-1. **Chemins relatifs (`base: './'`)** : `vite.config.ts` génère désormais des chemins relatifs pour les scripts et feuilles de style, évitant les erreurs 404 sur les sous-dossiers de dépôts GitHub Pages (`/<nom-du-repo>/assets/...`).
-2. **Support Jekyll désactivé (`.nojekyll`)** : Présence du fichier `.nojekyll` dans `public/` pour empêcher GitHub Pages d'ignorer les répertoires ou fichiers spécifiques générés par Vite.
-3. **Gestion d'erreur WebGL (`ErrorBoundary`)** : En cas d'incompatibilité matérielle ou d'absence de WebGL sur la machine du visiteur, un écran tactique affiche l'explication et un bouton de réinitialisation plutôt qu'une page blanche vide.
-4. **Redirection propre (`404.html`)** : Prise en charge des routes ou rafraîchissements GitHub Pages sans casser l'URL du dépôt.
+Cette commande compile le projet et publie directement les fichiers vers la branche `gh-pages` de votre dépôt.
 
 ---
 
-## 💻 Développement local
+## 🛠️ Développement local
 
 ```bash
-# Lancer le serveur de développement
+# Installation des dépendances
+npm install
+
+# Démarrage du serveur local (port 3000)
 npm run dev
 
-# Tester la compilation de production
+# Compilation pour la production (génère dist/ et docs/)
 npm run build
 ```
