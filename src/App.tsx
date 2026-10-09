@@ -25,6 +25,7 @@ import { TimelineModal } from './components/hud/TimelineModal';
 import { MobileTacticalBar } from './components/hud/MobileTacticalBar';
 import { PlanetHoverBanner } from './components/hud/PlanetHoverBanner';
 import { TacticalNavControls } from './components/hud/TacticalNavControls';
+import { SpaceFoldParticleOverlay } from './components/canvas/SpaceFoldParticleOverlay';
 import { storageService } from './services/storageService';
 import { Layers, Compass, Navigation, Info, Shield, Sparkles, Database, Clock } from 'lucide-react';
 
@@ -48,6 +49,7 @@ export default function App() {
     }
     return STAR_SYSTEMS_DATA[0];
   });
+  const [previousSystem, setPreviousSystem] = useState<StarSystem | null>(null);
   const [selectedPOI, setSelectedPOI] = useState<TacticalPOI | null>(() => {
     const saved = storageService.loadAutosave();
     if (saved?.selectedSystemId && saved?.systems) {
@@ -146,7 +148,12 @@ export default function App() {
 
   // Handle System Selection
   const handleSelectSystem = useCallback((sys: StarSystem) => {
-    setSelectedSystem(sys);
+    setSelectedSystem(current => {
+      if (current.id !== sys.id) {
+        setPreviousSystem(current);
+      }
+      return sys;
+    });
     setSelectedPOI(sys.tacticalPOIs[0] || null);
     setIsDossierOpen(true);
     setHoveredSystem(null); // Dismiss hover banner once selected
@@ -296,6 +303,13 @@ export default function App() {
           onSelectPOI={handleSelectPOI}
           onZoomChange={setZoomLevel}
           onHoverSystem={setHoveredSystem}
+        />
+
+        {/* Space-Fold Holtzman Warp Particle Transition Overlay */}
+        <SpaceFoldParticleOverlay
+          currentSystem={selectedSystem}
+          previousSystem={previousSystem}
+          enabled={config.spaceFoldEffect !== false}
         />
 
         {/* Tactical Planet Hover Banner (Appears dynamically on planet mouseover) */}
@@ -531,6 +545,7 @@ export default function App() {
           targetSystem={astrogationTargetSystem}
           onSelectSource={setAstrogationSourceSystem}
           onSelectTarget={setAstrogationTargetSystem}
+          onJumpToTarget={handleSelectSystem}
           onClose={() => setIsAstrogationOpen(false)}
         />
       )}

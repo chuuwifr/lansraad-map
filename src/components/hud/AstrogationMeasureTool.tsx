@@ -22,6 +22,7 @@ interface AstrogationMeasureToolProps {
   targetSystem: StarSystem | null;
   onSelectSource: (sys: StarSystem) => void;
   onSelectTarget: (sys: StarSystem) => void;
+  onJumpToTarget?: (target: StarSystem) => void;
   onClose: () => void;
 }
 
@@ -31,6 +32,7 @@ export const AstrogationMeasureTool: React.FC<AstrogationMeasureToolProps> = ({
   targetSystem,
   onSelectSource,
   onSelectTarget,
+  onJumpToTarget,
   onClose
 }) => {
   // If target not set, pick the first other system (or Arrakis)
@@ -217,16 +219,30 @@ export const AstrogationMeasureTool: React.FC<AstrogationMeasureToolProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[#06b6d4]/20 bg-[#06080d] flex justify-end">
+        <div className="p-4 border-t border-[#06b6d4]/20 bg-[#06080d] flex items-center justify-between gap-3">
           <button
             onClick={() => {
               audioSynth.playHoloClick(1400);
               onClose();
             }}
-            className="py-2 px-5 rounded bg-[#06b6d4] hover:bg-[#0891b2] text-[#04060a] font-mono text-xs font-bold tracking-wider transition-colors shadow-md"
+            className="py-2 px-4 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-mono text-xs font-bold tracking-wider transition-colors"
           >
-            FERMER LE CALCULATEUR
+            FERMER
           </button>
+
+          {onJumpToTarget && (
+            <button
+              onClick={() => {
+                audioSynth.playHoloClick(1600);
+                onJumpToTarget(effectiveTarget);
+                onClose();
+              }}
+              className="py-2 px-5 rounded bg-gradient-to-r from-[#06b6d4] to-[#f59e0b] hover:opacity-90 text-black font-mono text-xs font-bold tracking-wider transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] flex items-center gap-2"
+            >
+              <Zap className="w-4 h-4 text-black" />
+              <span>INITIER LE PLIAGE VERS {effectiveTarget.primaryPlanet.toUpperCase()}</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

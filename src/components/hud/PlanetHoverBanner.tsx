@@ -27,14 +27,7 @@ export const PlanetHoverBanner: React.FC<PlanetHoverBannerProps> = ({
 }) => {
   if (!hoveredSystem) return null;
 
-  const house = houses[hoveredSystem.controllingHouse] || houses.corrino || {
-    id: 'unknown',
-    name: 'Souveraineté Neutre',
-    shortName: 'Neutre',
-    sigil: '🪐',
-    color: '#f59e0b',
-    accentColor: '#fbbf24'
-  };
+  const house: HouseInfo = houses[hoveredSystem.controllingHouse] || houses.corrino || Object.values(houses)[0];
 
   const isArrakis = hoveredSystem.id === 'arrakis';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useImperativeHandle } from 'react';
+import React, { useEffect, useRef, useCallback, useImperativeHandle, useState } from 'react';
 import * as THREE from 'three';
 import { StarSystem, TacticalPOI, ZoomLevel, MapVisualConfig, SystemPlanet, SystemStar, SystemMoon } from '../../types/landsraad';
 import { HOUSES_DATA } from '../../data/landsraadData';
@@ -40,6 +40,7 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webglError, setWebglError] = useState<string | null>(null);
   
   // Three.js internal references
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -202,17 +203,24 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
     cameraRef.current = camera;
 
     // 3. Renderer
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvasRef.current,
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance'
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
-    rendererRef.current = renderer;
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvasRef.current,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.35;
+      rendererRef.current = renderer;
+    } catch (err: any) {
+      console.warn('WebGL initialization failed:', err);
+      setWebglError(err?.message || "Le navigateur n'a pas pu initialiser le contexte WebGL 3D.");
+      return;
+    }
 
     // 4. Lights (Cinematic Directional Sun + Subtle ambient space fill)
     const ambientLight = new THREE.AmbientLight(0x242b3d, 1.6);
@@ -1600,6 +1608,16 @@ export const HolosphereCanvas = React.forwardRef<HolosphereCanvasRef, Holosphere
       onTouchEnd={handleTouchEnd}
     >
       <canvas ref={canvasRef} className="w-full h-full block" />
+
+      {webglError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#060709]/90 p-6 z-20 pointer-events-auto">
+          <div className="max-w-md p-6 rounded-lg bg-neutral-900 border border-amber-600/40 text-center font-mono">
+            <div className="text-amber-500 font-bold mb-2">RENDU WEBGL INDISPONIBLE</div>
+            <p className="text-xs text-neutral-400 mb-4">{webglError}</p>
+            <p className="text-xs text-neutral-500">Activez l'accélération matérielle dans les paramètres de votre navigateur pour afficher la carte 3D.</p>
+          </div>
+        </div>
+      )}
 
       {/* Holographic Scanlines & Grain Layer */}
       {config.scanlinesIntensity > 0 && (

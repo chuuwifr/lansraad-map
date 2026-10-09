@@ -208,6 +208,7 @@ export interface MapVisualConfig {
   showStarLabels: boolean;
   showCoordinatesGrid: boolean;
   showShieldMeshes: boolean;
+  spaceFoldEffect?: boolean; // Cinematic particle warp transition when switching star systems
   audioEnabled: boolean;
   audioVolume: number;
   gyroscopeParallax: boolean;

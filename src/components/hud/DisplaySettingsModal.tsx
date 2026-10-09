@@ -375,6 +375,19 @@ export const DisplaySettingsModal: React.FC<DisplaySettingsModalProps> = ({
                   className="accent-[#f59e0b]"
                 />
               </label>
+
+              <label className="flex items-center justify-between p-2.5 rounded bg-neutral-900/70 border border-neutral-800 cursor-pointer col-span-1 sm:col-span-2">
+                <span className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#fbbf24]" />
+                  <span>Transition Particules Pliage Spatial (Space-Fold Warp)</span>
+                </span>
+                <input
+                  type="checkbox"
+                  checked={config.spaceFoldEffect !== false}
+                  onChange={(e) => onUpdateConfig(p => ({ ...p, spaceFoldEffect: e.target.checked }))}
+                  className="accent-[#f59e0b]"
+                />
+              </label>
             </div>
           </div>
 
